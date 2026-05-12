@@ -180,7 +180,24 @@ def summarize_expenses(expense_file_path="expenses.csv", budget=None):
 def streamlit_ui():
     """Streamlit web interface for expense tracker"""
     st.set_page_config(page_title="Expense Tracker", layout="wide")
-    st.title("💰 Expense Tracker")
+    
+    # Custom styling
+    st.markdown("""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        h1, h2, h3 {
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    st.title("Expense Tracker")
     
     # File paths
     EXPENSE_FILE = "expenses.csv"
@@ -226,17 +243,40 @@ def streamlit_ui():
     with st.sidebar:
         st.header("Budget Settings")
         
-        new_budget = st.number_input(
-            "Monthly Budget ($)",
+        col_budget1, col_budget2, col_budget3 = st.columns([1, 1, 1])
+        
+        with col_budget1:
+            if st.button("-", key="budget_minus", use_container_width=True):
+                st.session_state.current_budget = max(0.0, st.session_state.current_budget - 100.0)
+                with open(BUDGET_FILE, "w") as f:
+                    f.write(str(st.session_state.current_budget))
+                st.rerun()
+        
+        with col_budget2:
+            st.write("")
+        
+        with col_budget3:
+            if st.button("+", key="budget_plus", use_container_width=True):
+                st.session_state.current_budget += 100.0
+                with open(BUDGET_FILE, "w") as f:
+                    f.write(str(st.session_state.current_budget))
+                st.rerun()
+        
+        st.write(f"Monthly Budget: **${st.session_state.current_budget:.2f}**")
+        
+        # Direct input field
+        direct_budget = st.number_input(
+            "Set Budget Directly",
             value=st.session_state.current_budget,
             min_value=0.0,
-            step=100.0
+            step=10.0,
+            label_visibility="collapsed"
         )
         
-        if new_budget != st.session_state.current_budget:
-            st.session_state.current_budget = new_budget
+        if direct_budget != st.session_state.current_budget:
+            st.session_state.current_budget = direct_budget
             with open(BUDGET_FILE, "w") as f:
-                f.write(str(new_budget))
+                f.write(str(direct_budget))
             st.success("Budget updated!")
     
     # Main content area
@@ -245,7 +285,7 @@ def streamlit_ui():
     with col1:
         st.header("Add New Expense")
         
-        with st.form("expense_form"):
+        with st.form("expense_form", clear_on_submit=True):
             col_a, col_b = st.columns(2)
             
             with col_a:
@@ -256,7 +296,7 @@ def streamlit_ui():
                 amount = st.number_input("Amount ($)", min_value=0.01, step=0.01)
                 name = st.text_input("Expense Name", placeholder="e.g., Groceries, Uber, Movie")
             
-            submitted = st.form_submit_button("➕ Add Expense", use_container_width=True)
+            submitted = st.form_submit_button("Add Expense", use_container_width=True)
         
         if submitted:
             if not name:
@@ -278,7 +318,7 @@ def streamlit_ui():
                 
                 # Save to CSV
                 st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
-                st.success(f"✅ Added ${amount} for {name}")
+                st.success(f"Added ${amount} for {name}")
                 st.rerun()
     
     with col2:
@@ -291,16 +331,19 @@ def streamlit_ui():
             st.metric("Total Spent", f"${total_spent:.2f}")
             st.metric("Remaining", f"${remaining:.2f}")
             
-            # Progress bar
-            progress_color = "🟢" if remaining >= 0 else "🔴"
-            st.write(f"{progress_color} {percentage:.0f}% of budget used")
+            st.write(f"{percentage:.0f}% of budget used")
             st.progress(min(percentage / 100, 1.0))
+        elif st.session_state.current_budget > 0:
+            st.metric("Total Spent", "$0.00")
+            st.metric("Remaining", f"${st.session_state.current_budget:.2f}")
+            st.write("0% of budget used")
+            st.progress(0.0)
         else:
             st.info("Set a budget to see spending overview")
     
     # Expenses summary
     st.divider()
-    st.header("📊 Expenses Summary")
+    st.header("Expenses Summary")
     
     if not st.session_state.expenses_df.empty:
         # Convert Date column to datetime for sorting
@@ -308,21 +351,26 @@ def streamlit_ui():
         df_display["Date"] = pd.to_datetime(df_display["Date"])
         df_display = df_display.sort_values("Date", ascending=False)
         
-        # Show recent expenses
+        # Show recent expenses with better formatting
         st.subheader("Recent Expenses")
-        st.dataframe(df_display, use_container_width=True)
+        df_display_formatted = df_display.copy()
+        df_display_formatted["Amount"] = df_display_formatted["Amount"].apply(lambda x: f"${x:.2f}")
+        st.dataframe(df_display_formatted, use_container_width=True, hide_index=True)
         
         # Category breakdown
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("By Category")
+            st.subheader("Spending by Category")
             category_summary = st.session_state.expenses_df.groupby("Category")["Amount"].sum().sort_values(ascending=False)
             st.bar_chart(category_summary)
         
         with col2:
-            st.subheader("Category Breakdown")
-            st.write(category_summary)
+            st.subheader("Category Totals")
+            category_summary_df = category_summary.reset_index()
+            category_summary_df.columns = ["Category", "Amount"]
+            category_summary_df["Amount"] = category_summary_df["Amount"].apply(lambda x: f"${x:.2f}")
+            st.dataframe(category_summary_df, use_container_width=True, hide_index=True)
     else:
         st.info("No expenses yet. Add one to get started!")
 
