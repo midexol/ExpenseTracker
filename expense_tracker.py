@@ -204,8 +204,21 @@ def streamlit_ui():
     EXPENSE_FILE = "expenses.csv"
     BUDGET_FILE = "budget.txt"
     
+    # Exchange rates (to USD)
+    EXCHANGE_RATES = {
+        "USD": 1.0,
+        "NGN": 0.0006,  # 1 NGN = 0.0006 USD (approximate)
+        "GBP": 1.27     # 1 GBP = 1.27 USD (approximate)
+    }
+    
     # Categories from CLI
     CATEGORIES = ["Food", "Home", "work", "transportation", "Fun", "miscellaneous"]
+    
+    # Initialize session state for currency and base currency
+    if "currency" not in st.session_state:
+        st.session_state.currency = "USD"
+        st.session_state.currency_symbol = "$"
+        st.session_state.base_currency = "USD"  # Currency used for data entry
     
     # Initialize session state for budget
     if "current_budget" not in st.session_state:
@@ -253,7 +266,29 @@ def streamlit_ui():
         st.subheader("Currency")
         currency_map = {"Dollar ($)": ("USD", "$"), "Naira (₦)": ("NGN", "₦"), "Pounds (£)": ("GBP", "£")}
         selected_currency = st.radio("Select Currency", list(currency_map.keys()), index=0, label_visibility="collapsed")
-        st.session_state.currency, st.session_state.currency_symbol = currency_map[selected_currency]
+        new_currency, new_symbol = currency_map[selected_currency]
+        
+        # Handle currency conversion
+        if new_currency != st.session_state.currency and not st.session_state.expenses_df.empty:
+            # Convert all amounts from base currency to new currency
+            old_rate = EXCHANGE_RATES[st.session_state.base_currency]
+            new_rate = EXCHANGE_RATES[new_currency]
+            
+            # Convert to USD first, then to new currency
+            conversion_factor = (1 / old_rate) * new_rate
+            st.session_state.expenses_df["Amount"] = st.session_state.expenses_df["Amount"] * conversion_factor
+            st.session_state.current_budget = st.session_state.current_budget * conversion_factor
+            
+            # Update CSV with converted amounts
+            st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
+            with open(BUDGET_FILE, "w") as f:
+                f.write(str(st.session_state.current_budget))
+            
+            st.session_state.base_currency = new_currency
+            st.toast("Currency converted!")
+        
+        st.session_state.currency = new_currency
+        st.session_state.currency_symbol = new_symbol
         
         st.divider()
         
@@ -267,7 +302,7 @@ def streamlit_ui():
                 st.session_state.current_budget = max(0.0, st.session_state.current_budget - 100.0)
                 with open(BUDGET_FILE, "w") as f:
                     f.write(str(st.session_state.current_budget))
-                st.toast("Budget updated!", icon="✓")
+                st.toast("Budget updated!")
         
         with col_budget2:
             st.write("")
@@ -277,7 +312,7 @@ def streamlit_ui():
                 st.session_state.current_budget += 100.0
                 with open(BUDGET_FILE, "w") as f:
                     f.write(str(st.session_state.current_budget))
-                st.toast("Budget updated!", icon="✓")
+                st.toast("Budget updated!")
         
         st.write(f"**{st.session_state.currency_symbol}{st.session_state.current_budget:.2f}**")
         
@@ -294,7 +329,7 @@ def streamlit_ui():
             st.session_state.current_budget = direct_budget
             with open(BUDGET_FILE, "w") as f:
                 f.write(str(direct_budget))
-            st.toast("Budget updated!", icon="✓")
+            st.toast("Budget updated!")
     
     # Main content area
     col1, col2 = st.columns([2, 1])
@@ -335,7 +370,7 @@ def streamlit_ui():
                 
                 # Save to CSV
                 st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
-                st.toast(f"Added {st.session_state.currency_symbol}{amount} for {name}", icon="✓")
+                st.toast(f"Added {st.session_state.currency_symbol}{amount} for {name}")
                 st.rerun()
     
     with col2:
