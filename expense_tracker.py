@@ -111,8 +111,15 @@ def read_expenses_from_file(expense_file_path="expenses.csv"):
         with open(expense_file_path, "r") as file:
             for line in file:
                 parts = line.strip().split(",")
-                date, name, category, amount = parts[0], parts[1], parts[2], parts[3]
-                expenses.append(Expense(name=name, category=category, amount=float(amount), date=date))
+                # Skip malformed lines
+                if len(parts) < 4:
+                    continue
+                try:
+                    date, name, category, amount = parts[0], parts[1], parts[2], parts[3]
+                    expenses.append(Expense(name=name, category=category, amount=float(amount), date=date))
+                except (ValueError, IndexError):
+                    # Skip lines that can't be parsed
+                    continue
     except FileNotFoundError:
         pass
     return expenses 
@@ -182,10 +189,36 @@ def streamlit_ui():
     # Categories from CLI
     CATEGORIES = ["Food", "Home", "work", "transportation", "Fun", "miscellaneous"]
     
-    # Initialize session state
+    # Initialize session state for budget
+    if "current_budget" not in st.session_state:
+        if os.path.exists(BUDGET_FILE):
+            with open(BUDGET_FILE, "r") as f:
+                try:
+                    st.session_state.current_budget = float(f.read().strip())
+                except ValueError:
+                    st.session_state.current_budget = 0.0
+        else:
+            st.session_state.current_budget = 0.0
+    
+    # Initialize session state for expenses
     if "expenses_df" not in st.session_state:
         if os.path.exists(EXPENSE_FILE):
-            st.session_state.expenses_df = pd.read_csv(EXPENSE_FILE)
+            try:
+                # Check if file has headers by reading first line
+                with open(EXPENSE_FILE, "r") as f:
+                    first_line = f.readline().strip()
+                
+                # If first line contains "Date" (header), read normally; otherwise read without header
+                if "Date" in first_line or first_line.lower() == "date,name,category,amount":
+                    df = pd.read_csv(EXPENSE_FILE, dtype={"Date": str, "Name": str, "Category": str, "Amount": float})
+                else:
+                    df = pd.read_csv(EXPENSE_FILE, header=None, dtype={0: str, 1: str, 2: str, 3: float})
+                    df.columns = ["Date", "Name", "Category", "Amount"]
+                
+                st.session_state.expenses_df = df if df.shape[0] > 0 else pd.DataFrame(columns=["Date", "Name", "Category", "Amount"])
+            except Exception as e:
+                st.warning(f"Could not read expenses file: {e}")
+                st.session_state.expenses_df = pd.DataFrame(columns=["Date", "Name", "Category", "Amount"])
         else:
             st.session_state.expenses_df = pd.DataFrame(columns=["Date", "Name", "Category", "Amount"])
     
@@ -193,25 +226,18 @@ def streamlit_ui():
     with st.sidebar:
         st.header("Budget Settings")
         
-        # Load or set budget
-        if os.path.exists(BUDGET_FILE):
-            with open(BUDGET_FILE, "r") as f:
-                current_budget = float(f.read().strip())
-        else:
-            current_budget = 0
-        
         new_budget = st.number_input(
             "Monthly Budget ($)",
-            value=current_budget,
+            value=st.session_state.current_budget,
             min_value=0.0,
             step=100.0
         )
         
-        if new_budget != current_budget:
+        if new_budget != st.session_state.current_budget:
+            st.session_state.current_budget = new_budget
             with open(BUDGET_FILE, "w") as f:
                 f.write(str(new_budget))
             st.success("Budget updated!")
-            current_budget = new_budget
     
     # Main content area
     col1, col2 = st.columns([2, 1])
@@ -227,7 +253,7 @@ def streamlit_ui():
                 category = st.selectbox("Category", CATEGORIES)
             
             with col_b:
-                amount = st.number_input("Amount ($)", min_value=0.0, step=0.01)
+                amount = st.number_input("Amount ($)", min_value=0.01, step=0.01)
                 name = st.text_input("Expense Name", placeholder="e.g., Groceries, Uber, Movie")
             
             submitted = st.form_submit_button("➕ Add Expense", use_container_width=True)
@@ -235,8 +261,6 @@ def streamlit_ui():
         if submitted:
             if not name:
                 st.error("Please enter an expense name")
-            elif amount <= 0:
-                st.error("Amount must be greater than 0")
             else:
                 # Create new row
                 new_row = pd.DataFrame({
@@ -259,10 +283,10 @@ def streamlit_ui():
     
     with col2:
         st.header("Budget Status")
-        if current_budget > 0 and not st.session_state.expenses_df.empty:
+        if st.session_state.current_budget > 0 and not st.session_state.expenses_df.empty:
             total_spent = st.session_state.expenses_df["Amount"].sum()
-            remaining = current_budget - total_spent
-            percentage = (total_spent / current_budget) * 100
+            remaining = st.session_state.current_budget - total_spent
+            percentage = (total_spent / st.session_state.current_budget) * 100
             
             st.metric("Total Spent", f"${total_spent:.2f}")
             st.metric("Remaining", f"${remaining:.2f}")
