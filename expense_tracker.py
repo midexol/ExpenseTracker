@@ -249,7 +249,7 @@ def streamlit_ui():
     # Exchange rates
     EXCHANGE_RATES = {
         "USD": 1.0,
-        "NGN": 1/1400  # 1 NGN ≈ 0.0007 USD
+        "NGN": 1*1400  # 1 NGN ≈ 1400 USD
     }
     
     # Categories from CLI
