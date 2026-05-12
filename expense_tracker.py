@@ -83,10 +83,10 @@ def get_user_expense():
     
     expense_categories = [ "Food",
                            "Home",
-                           "work",
-                           "transportation",
+                           "Work",
+                           "Transportation",
                            "Fun",
-                           "miscellaneous" ]
+                           "Miscellaneous" ]
     
     while True:
         print("Select a category for the expense:")
@@ -250,7 +250,11 @@ def streamlit_ui():
     EXCHANGE_RATES = {
         "USD": 1.0,
         "NGN": 1*1400,  # 1 USD = 1400 NGN (current rate)
+<<<<<<< HEAD
         "GBP": 1* 0.8    # 1 GBP = 0.8 USD (current rate)
+=======
+        "GBP": 1*0.8   # 1 GBP = 0.8 USD (current rate)
+>>>>>>> 5f30b515b5e672cd7b590b6dcab42e706e477364
     }
     
     # Categories from CLI
