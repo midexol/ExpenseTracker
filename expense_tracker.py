@@ -246,15 +246,10 @@ def streamlit_ui():
     EXPENSE_FILE = "expenses.csv"
     BUDGET_FILE = "budget.txt"
     
-    # Exchange rates (to USD)
+    # Exchange rates
     EXCHANGE_RATES = {
         "USD": 1.0,
-        "NGN": 1*1400,  # 1 USD = 1400 NGN (current rate)
-<<<<<<< HEAD
-        "GBP": 1* 0.8    # 1 GBP = 0.8 USD (current rate)
-=======
-        "GBP": 1*0.8   # 1 GBP = 0.8 USD (current rate)
->>>>>>> 5f30b515b5e672cd7b590b6dcab42e706e477364
+        "NGN": 1/1400  # 1 NGN ≈ 0.0007 USD
     }
     
     # Categories from CLI
@@ -302,11 +297,7 @@ def streamlit_ui():
         st.subheader("Currency Settings")
         currency_map = {
             "Dollar ($)": ("USD", "$"),
-            "Naira (₦)": ("NGN", "₦"),
-            "Pounds (£)": ("GBP", "£"),
-            "Euro (€)": ("EUR", "€"),
-            "Canadian Dollar (C$)": ("CAD", "C$"),
-            "Australian Dollar (A$)": ("AUD", "A$")
+            "Naira (₦)": ("NGN", "₦")
         }
         selected_currency = st.radio("Select Currency", list(currency_map.keys()), label_visibility="collapsed")
         new_currency, new_symbol = currency_map[selected_currency]
