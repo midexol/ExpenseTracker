@@ -208,7 +208,7 @@ def streamlit_ui():
     EXCHANGE_RATES = {
         "USD": 1.0,
         "NGN": 1*1400,  # 1 USD = 1400 NGN (current rate)
-        "GBP": 1.27     # 1 GBP = 1.27 USD
+        "GBP": 1*0.8   # 1 GBP = 0.8 USD (current rate)
     }
     
     # Categories from CLI
