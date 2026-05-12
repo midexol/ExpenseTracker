@@ -11,6 +11,10 @@ try:
 except ImportError:
     HAS_STREAMLIT = False
 
+def is_running_streamlit():
+    """Check if script is being run via streamlit"""
+    return HAS_STREAMLIT and hasattr(st, 'set_page_config')
+
 def main():
     print("Running Expense Tracker!")
     expense_file_path = "expenses.csv"
@@ -299,12 +303,7 @@ def streamlit_ui():
         st.info("No expenses yet. Add one to get started!")
 
 if __name__ == "__main__":
-    # Check if running in Streamlit context
-    if HAS_STREAMLIT and 'streamlit' in sys.modules:
-        try:
-            streamlit_ui()
-            sys.exit()  # Prevent CLI from running
-        except:
-            pass  # Fall back to CLI if Streamlit fails
-    
-    main()
+    if is_running_streamlit():
+        streamlit_ui()
+    else:
+        main()
