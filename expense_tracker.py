@@ -76,16 +76,16 @@ def get_user_expense():
             datetime.strptime(expense_date, "%Y-%m-%d")
             break
         except ValueError:
-            print("Invalid date format. Please use YYYY-MM-DD.")
+            print("Invalid date format. Please use DD-MM-YYYY.")
     
     print(f"Date set to: {expense_date}")
     
     expense_categories = [ "Food",
                            "Home",
-                           "work",
-                           "transportation",
+                           "Work",
+                           "Transportation",
                            "Fun",
-                           "miscellaneous" ]
+                           "Miscellaneous" ]
     
     while True:
         print("Select a category for the expense:")
