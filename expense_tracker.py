@@ -3,6 +3,7 @@ import expenses
 from datetime import datetime, timedelta
 import sys
 import os
+import json
 
 try:
     import streamlit as st
@@ -172,11 +173,52 @@ def summarize_expenses(expense_file_path="expenses.csv", budget=None):
         
         # Check if over budget
         if remaining_budget < 0:
-            print(f"\n⚠️  WARNING: You are OVER BUDGET by ${abs(remaining_budget):.2f}!")
+            print(f"\nWARNING: You are OVER BUDGET by ${abs(remaining_budget):.2f}!")
         elif remaining_budget < budget * 0.1:
-            print(f"\n⚠️  CAUTION: You have only 10% of your budget remaining!")
+            print(f"\nCAUTION: You have only 10% of your budget remaining!")
         else:
             print(f"\n You are within budget.")
+
+def get_remaining_days(budget_type):
+    """Calculate remaining days for the budget period"""
+    today = datetime.now()
+    
+    if budget_type == "Monthly":
+        # Get last day of current month
+        if today.month == 12:
+            last_day = datetime(today.year + 1, 1, 1) - timedelta(days=1)
+        else:
+            last_day = datetime(today.year, today.month + 1, 1) - timedelta(days=1)
+        remaining_days = (last_day.date() - today.date()).days + 1
+    else:  # Weekly
+        # Calculate days until end of week (Sunday)
+        days_until_sunday = (6 - today.weekday()) % 7
+        if days_until_sunday == 0 and today.weekday() != 6:
+            days_until_sunday = 7
+        remaining_days = days_until_sunday if days_until_sunday > 0 else 7
+    
+    return remaining_days
+
+def load_budget_settings(budget_file_path):
+    """Load budget and its type from file"""
+    try:
+        with open(budget_file_path, "r") as file:
+            content = file.read().strip()
+            if content.startswith("{"):
+                # JSON format with type
+                data = json.loads(content)
+                return data.get("amount", 0.0), data.get("type", "Monthly")
+            else:
+                # Legacy format - just a number
+                return float(content), "Monthly"
+    except (FileNotFoundError, ValueError, json.JSONDecodeError):
+        return 0.0, "Monthly"
+
+def save_budget_settings(budget_amount, budget_type, budget_file_path):
+    """Save budget and its type to file"""
+    with open(budget_file_path, "w") as file:
+        data = {"amount": budget_amount, "type": budget_type}
+        file.write(json.dumps(data))
 
 def streamlit_ui():
     """Streamlit web interface for expense tracker"""
@@ -207,8 +249,8 @@ def streamlit_ui():
     # Exchange rates (to USD)
     EXCHANGE_RATES = {
         "USD": 1.0,
-        "NGN": 1/1620,  # 1 USD = 1620 NGN (current rate)
-        "GBP": 1.27     # 1 GBP = 1.27 USD
+        "NGN": 1*1400,  # 1 USD = 1400 NGN (current rate)
+        "GBP": 1* 0.8    # 1 GBP = 0.8 USD (current rate)
     }
     
     # Categories from CLI
@@ -220,21 +262,11 @@ def streamlit_ui():
         st.session_state.currency_symbol = "$"
         st.session_state.base_currency = "USD"  # Currency used for data entry
     
-    # Initialize session state for budget
-    if "current_budget" not in st.session_state:
-        if os.path.exists(BUDGET_FILE):
-            with open(BUDGET_FILE, "r") as f:
-                try:
-                    st.session_state.current_budget = float(f.read().strip())
-                except ValueError:
-                    st.session_state.current_budget = 0.0
-        else:
-            st.session_state.current_budget = 0.0
-    
-    # Initialize session state for currency
-    if "currency" not in st.session_state:
-        st.session_state.currency = "USD"
-        st.session_state.currency_symbol = "$"
+    # Initialize session state for budget and budget type
+    if "current_budget" not in st.session_state or "budget_type" not in st.session_state:
+        budget_amount, budget_type = load_budget_settings(BUDGET_FILE)
+        st.session_state.current_budget = budget_amount
+        st.session_state.budget_type = budget_type
     
     # Initialize session state for expenses
     if "expenses_df" not in st.session_state:
@@ -262,47 +294,74 @@ def streamlit_ui():
     with st.sidebar:
         st.header("Settings")
         
-        # Currency selection
-        st.subheader("Currency")
-        currency_map = {"Dollar ($)": ("USD", "$"), "Naira (₦)": ("NGN", "₦"), "Pounds (£)": ("GBP", "£")}
-        selected_currency = st.radio("Select Currency", list(currency_map.keys()), index=0, label_visibility="collapsed")
+        # Currency selection with better handling
+        st.subheader("Currency Settings")
+        currency_map = {
+            "Dollar ($)": ("USD", "$"),
+            "Naira (₦)": ("NGN", "₦"),
+            "Pounds (£)": ("GBP", "£"),
+            "Euro (€)": ("EUR", "€"),
+            "Canadian Dollar (C$)": ("CAD", "C$"),
+            "Australian Dollar (A$)": ("AUD", "A$")
+        }
+        selected_currency = st.radio("Select Currency", list(currency_map.keys()), label_visibility="collapsed")
         new_currency, new_symbol = currency_map[selected_currency]
         
-        # Handle currency conversion
-        if new_currency != st.session_state.currency and not st.session_state.expenses_df.empty:
-            # Convert all amounts from base currency to new currency
-            old_rate = EXCHANGE_RATES[st.session_state.base_currency]
-            new_rate = EXCHANGE_RATES[new_currency]
-            
-            # Convert to USD first, then to new currency
-            conversion_factor = (1 / old_rate) * new_rate
-            st.session_state.expenses_df["Amount"] = st.session_state.expenses_df["Amount"] * conversion_factor
-            st.session_state.current_budget = st.session_state.current_budget * conversion_factor
-            
-            # Update CSV with converted amounts
-            st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
-            with open(BUDGET_FILE, "w") as f:
-                f.write(str(st.session_state.current_budget))
-            
-            st.session_state.base_currency = new_currency
-            st.toast("Currency converted!")
+        # Handle currency conversion - ONLY convert when currency actually changes
+        if new_currency != st.session_state.currency:
+            if not st.session_state.expenses_df.empty:
+                # Convert all amounts from base currency to new currency
+                old_rate = EXCHANGE_RATES[st.session_state.base_currency]
+                new_rate = EXCHANGE_RATES[new_currency]
+                
+                # Convert to USD first, then to new currency
+                conversion_factor = new_rate / old_rate
+                st.session_state.expenses_df["Amount"] = (st.session_state.expenses_df["Amount"] * conversion_factor).round(2)
+                st.session_state.current_budget = round(st.session_state.current_budget * conversion_factor, 2)
+                
+                # Update CSV with converted amounts
+                st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
+                save_budget_settings(st.session_state.current_budget, st.session_state.budget_type, BUDGET_FILE)
+                
+                st.session_state.base_currency = new_currency
+                st.success(f"Currency converted to {new_symbol}")
+            else:
+                st.session_state.base_currency = new_currency
         
         st.session_state.currency = new_currency
         st.session_state.currency_symbol = new_symbol
         
         st.divider()
         
-        # Budget management
-        st.subheader("Monthly Budget")
+        # Budget management with type selection
+        st.subheader("Budget Settings")
         
+        # Budget type selector (Monthly or Weekly)
+        budget_type = st.radio(
+            "Budget Period",
+            options=["Monthly", "Weekly"],
+            index=0 if st.session_state.budget_type == "Monthly" else 1,
+            label_visibility="collapsed"
+        )
+        
+        if budget_type != st.session_state.budget_type:
+            st.session_state.budget_type = budget_type
+            save_budget_settings(st.session_state.current_budget, budget_type, BUDGET_FILE)
+            st.success(f"Budget period changed to {budget_type}")
+        
+        # Calculate and display remaining days
+        remaining_days = get_remaining_days(st.session_state.budget_type)
+        st.caption(f"Days remaining: {remaining_days}")
+        
+        # Budget adjustment
         col_budget1, col_budget2, col_budget3 = st.columns([1, 1, 1])
         
         with col_budget1:
             if st.button("−", key="budget_minus", use_container_width=True):
                 st.session_state.current_budget = max(0.0, st.session_state.current_budget - 100.0)
-                with open(BUDGET_FILE, "w") as f:
-                    f.write(str(st.session_state.current_budget))
+                save_budget_settings(st.session_state.current_budget, st.session_state.budget_type, BUDGET_FILE)
                 st.toast("Budget updated!")
+                st.rerun()
         
         with col_budget2:
             st.write("")
@@ -310,9 +369,9 @@ def streamlit_ui():
         with col_budget3:
             if st.button("+", key="budget_plus", use_container_width=True):
                 st.session_state.current_budget += 100.0
-                with open(BUDGET_FILE, "w") as f:
-                    f.write(str(st.session_state.current_budget))
+                save_budget_settings(st.session_state.current_budget, st.session_state.budget_type, BUDGET_FILE)
                 st.toast("Budget updated!")
+                st.rerun()
         
         st.write(f"**{st.session_state.currency_symbol}{st.session_state.current_budget:.2f}**")
         
@@ -327,9 +386,42 @@ def streamlit_ui():
         
         if direct_budget != st.session_state.current_budget:
             st.session_state.current_budget = direct_budget
-            with open(BUDGET_FILE, "w") as f:
-                f.write(str(direct_budget))
-            st.toast("Budget updated!")
+            save_budget_settings(direct_budget, st.session_state.budget_type, BUDGET_FILE)
+            st.success("Budget updated!")
+            st.rerun()
+        
+        st.divider()
+        
+        # Data Management
+        st.subheader("Data Management")
+        
+        col_data1, col_data2 = st.columns(2)
+        
+        with col_data1:
+            if st.button("Clear Budget", use_container_width=True, key="clear_budget"):
+                st.session_state.current_budget = 0.0
+                save_budget_settings(0.0, st.session_state.budget_type, BUDGET_FILE)
+                st.success("Budget cleared!")
+                st.rerun()
+        
+        with col_data2:
+            if st.button("Reset All Data", use_container_width=True, key="reset_data", type="secondary"):
+                # Show confirmation dialog
+                st.warning("This will clear all local expenses and budget. This cannot be undone!")
+                col_confirm1, col_confirm2 = st.columns(2)
+                with col_confirm1:
+                    if st.button("Confirm Reset", key="confirm_reset"):
+                        # Reset expenses
+                        st.session_state.expenses_df = pd.DataFrame(columns=["Date", "Name", "Category", "Amount"])
+                        st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
+                        # Reset budget
+                        st.session_state.current_budget = 0.0
+                        save_budget_settings(0.0, "Monthly", BUDGET_FILE)
+                        st.success("All local data has been reset!")
+                        st.rerun()
+                with col_confirm2:
+                    if st.button("Cancel", key="cancel_reset"):
+                        st.info("Reset cancelled")
     
     # Main content area
     col1, col2 = st.columns([2, 1])
@@ -370,30 +462,48 @@ def streamlit_ui():
                 
                 # Save to CSV
                 st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
-                st.toast(f"Added {st.session_state.currency_symbol}{amount} for {name}")
+                st.success(f"Added {st.session_state.currency_symbol}{amount} for {name}")
                 st.rerun()
     
     with col2:
         st.header("Budget Status")
+        remaining_days = get_remaining_days(st.session_state.budget_type)
+        period_label = "Month" if st.session_state.budget_type == "Monthly" else "Week"
+        
         if st.session_state.current_budget > 0 and not st.session_state.expenses_df.empty:
             total_spent = st.session_state.expenses_df["Amount"].sum()
             remaining = st.session_state.current_budget - total_spent
             percentage = (total_spent / st.session_state.current_budget) * 100
+            daily_allowance = remaining / remaining_days if remaining_days > 0 else 0
             
             st.metric("Total Spent", f"{st.session_state.currency_symbol}{total_spent:.2f}")
             st.metric("Remaining", f"{st.session_state.currency_symbol}{remaining:.2f}")
+            st.metric(f"Daily Allowance ({period_label})", f"{st.session_state.currency_symbol}{daily_allowance:.2f}")
             
             st.write(f"{percentage:.0f}% of budget used")
-            st.progress(min(percentage / 100, 1.0))
+            
+            # Color code progress bar
+            if percentage >= 100:
+                st.error(f"You are OVER budget by {st.session_state.currency_symbol}{abs(remaining):.2f}!")
+                st.progress(1.0)
+            elif percentage >= 80:
+                st.warning(f"Approaching budget limit!")
+                st.progress(min(percentage / 100, 1.0))
+            else:
+                st.success(f"You are within budget")
+                st.progress(percentage / 100)
         elif st.session_state.current_budget > 0:
+            remaining_days = get_remaining_days(st.session_state.budget_type)
+            daily_allowance = st.session_state.current_budget / remaining_days if remaining_days > 0 else 0
             st.metric("Total Spent", f"{st.session_state.currency_symbol}0.00")
             st.metric("Remaining", f"{st.session_state.currency_symbol}{st.session_state.current_budget:.2f}")
+            st.metric(f"Daily Allowance ({period_label})", f"{st.session_state.currency_symbol}{daily_allowance:.2f}")
             st.write("0% of budget used")
             st.progress(0.0)
         else:
             st.info("Set a budget to see spending overview")
     
-    # Expenses summary
+    # Expenses summary with edit/delete
     st.divider()
     st.header("Expenses Summary")
     
@@ -403,11 +513,72 @@ def streamlit_ui():
         df_display["Date"] = pd.to_datetime(df_display["Date"])
         df_display = df_display.sort_values("Date", ascending=False)
         
-        # Show recent expenses with better formatting
+        # Show recent expenses with edit/delete functionality
         st.subheader("Recent Expenses")
-        df_display_formatted = df_display.copy()
-        df_display_formatted["Amount"] = df_display_formatted["Amount"].apply(lambda x: f"{st.session_state.currency_symbol}{x:.2f}")
-        st.dataframe(df_display_formatted, use_container_width=True, hide_index=True)
+        
+        # Create a table with edit/delete buttons
+        for idx, row in df_display.iterrows():
+            col1, col2, col3, col4, col5 = st.columns([3, 2, 2, 1, 1])
+            
+            with col1:
+                st.write(f"**{row['Name']}** ({row['Category']})")
+            with col2:
+                st.write(f"{st.session_state.currency_symbol}{row['Amount']:.2f}")
+            with col3:
+                st.write(f"{row['Date'].strftime('%Y-%m-%d')}")
+            with col4:
+                if st.button("Edit", key=f"edit_{idx}", help="Edit entry"):
+                    # Store the index for editing
+                    st.session_state.edit_index = idx
+            with col5:
+                if st.button("Delete", key=f"delete_{idx}", help="Delete entry"):
+                    # Delete the entry
+                    st.session_state.expenses_df = st.session_state.expenses_df.drop(idx).reset_index(drop=True)
+                    st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
+                    st.success("Entry deleted!")
+                    st.rerun()
+        
+        # Edit modal
+        if "edit_index" in st.session_state:
+            edit_idx = st.session_state.edit_index
+            expense = st.session_state.expenses_df.iloc[edit_idx]
+            
+            st.divider()
+            st.subheader("Edit Expense")
+            
+            with st.form("edit_form"):
+                col_a, col_b = st.columns(2)
+                
+                with col_a:
+                    new_date = st.date_input("Date", value=pd.to_datetime(expense['Date']).date())
+                    new_category = st.selectbox("Category", CATEGORIES, index=CATEGORIES.index(expense['Category']))
+                
+                with col_b:
+                    new_amount = st.number_input("Amount", value=float(expense['Amount']), min_value=0.01, step=0.01, format="%.2f")
+                    new_name = st.text_input("Expense Name", value=expense['Name'])
+                
+                col_submit1, col_submit2 = st.columns(2)
+                
+                with col_submit1:
+                    if st.form_submit_button("Save Changes"):
+                        # Update the expense
+                        st.session_state.expenses_df.loc[edit_idx, 'Date'] = new_date.strftime("%Y-%m-%d")
+                        st.session_state.expenses_df.loc[edit_idx, 'Name'] = new_name
+                        st.session_state.expenses_df.loc[edit_idx, 'Category'] = new_category
+                        st.session_state.expenses_df.loc[edit_idx, 'Amount'] = new_amount
+                        
+                        # Save to CSV
+                        st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
+                        
+                        # Clear edit state
+                        del st.session_state.edit_index
+                        st.success("Entry updated!")
+                        st.rerun()
+                
+                with col_submit2:
+                    if st.form_submit_button("Cancel"):
+                        del st.session_state.edit_index
+                        st.rerun()
         
         # Monthly analysis (hidden by default, expandable)
         with st.expander("Monthly Summary"):
