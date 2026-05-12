@@ -76,7 +76,7 @@ def get_user_expense():
             datetime.strptime(expense_date, "%Y-%m-%d")
             break
         except ValueError:
-            print("Invalid date format. Please use DD-MM-YYYY.")
+            print("Invalid date format. Please use YYYY-MM-DD.")
     
     print(f"Date set to: {expense_date}")
     
