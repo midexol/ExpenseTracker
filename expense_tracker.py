@@ -7,6 +7,7 @@ import os
 try:
     import streamlit as st
     import pandas as pd
+    import altair as alt
     HAS_STREAMLIT = True
 except ImportError:
     HAS_STREAMLIT = False
@@ -217,6 +218,11 @@ def streamlit_ui():
         else:
             st.session_state.current_budget = 0.0
     
+    # Initialize session state for currency
+    if "currency" not in st.session_state:
+        st.session_state.currency = "USD"
+        st.session_state.currency_symbol = "$"
+    
     # Initialize session state for expenses
     if "expenses_df" not in st.session_state:
         if os.path.exists(EXPENSE_FILE):
@@ -241,16 +247,27 @@ def streamlit_ui():
     
     # Sidebar for budget management
     with st.sidebar:
-        st.header("Budget Settings")
+        st.header("Settings")
+        
+        # Currency selection
+        st.subheader("Currency")
+        currency_map = {"Dollar ($)": ("USD", "$"), "Naira (₦)": ("NGN", "₦"), "Pounds (£)": ("GBP", "£")}
+        selected_currency = st.radio("Select Currency", list(currency_map.keys()), index=0, label_visibility="collapsed")
+        st.session_state.currency, st.session_state.currency_symbol = currency_map[selected_currency]
+        
+        st.divider()
+        
+        # Budget management
+        st.subheader("Monthly Budget")
         
         col_budget1, col_budget2, col_budget3 = st.columns([1, 1, 1])
         
         with col_budget1:
-            if st.button("-", key="budget_minus", use_container_width=True):
+            if st.button("−", key="budget_minus", use_container_width=True):
                 st.session_state.current_budget = max(0.0, st.session_state.current_budget - 100.0)
                 with open(BUDGET_FILE, "w") as f:
                     f.write(str(st.session_state.current_budget))
-                st.rerun()
+                st.toast("Budget updated!", icon="✓")
         
         with col_budget2:
             st.write("")
@@ -260,9 +277,9 @@ def streamlit_ui():
                 st.session_state.current_budget += 100.0
                 with open(BUDGET_FILE, "w") as f:
                     f.write(str(st.session_state.current_budget))
-                st.rerun()
+                st.toast("Budget updated!", icon="✓")
         
-        st.write(f"Monthly Budget: **${st.session_state.current_budget:.2f}**")
+        st.write(f"**{st.session_state.currency_symbol}{st.session_state.current_budget:.2f}**")
         
         # Direct input field
         direct_budget = st.number_input(
@@ -277,7 +294,7 @@ def streamlit_ui():
             st.session_state.current_budget = direct_budget
             with open(BUDGET_FILE, "w") as f:
                 f.write(str(direct_budget))
-            st.success("Budget updated!")
+            st.toast("Budget updated!", icon="✓")
     
     # Main content area
     col1, col2 = st.columns([2, 1])
@@ -293,7 +310,7 @@ def streamlit_ui():
                 category = st.selectbox("Category", CATEGORIES)
             
             with col_b:
-                amount = st.number_input("Amount ($)", min_value=0.01, step=0.01)
+                amount = st.number_input("Amount", min_value=0.01, step=0.01, format="%.2f")
                 name = st.text_input("Expense Name", placeholder="e.g., Groceries, Uber, Movie")
             
             submitted = st.form_submit_button("Add Expense", use_container_width=True)
@@ -318,7 +335,7 @@ def streamlit_ui():
                 
                 # Save to CSV
                 st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
-                st.success(f"Added ${amount} for {name}")
+                st.toast(f"Added {st.session_state.currency_symbol}{amount} for {name}", icon="✓")
                 st.rerun()
     
     with col2:
@@ -328,14 +345,14 @@ def streamlit_ui():
             remaining = st.session_state.current_budget - total_spent
             percentage = (total_spent / st.session_state.current_budget) * 100
             
-            st.metric("Total Spent", f"${total_spent:.2f}")
-            st.metric("Remaining", f"${remaining:.2f}")
+            st.metric("Total Spent", f"{st.session_state.currency_symbol}{total_spent:.2f}")
+            st.metric("Remaining", f"{st.session_state.currency_symbol}{remaining:.2f}")
             
             st.write(f"{percentage:.0f}% of budget used")
             st.progress(min(percentage / 100, 1.0))
         elif st.session_state.current_budget > 0:
-            st.metric("Total Spent", "$0.00")
-            st.metric("Remaining", f"${st.session_state.current_budget:.2f}")
+            st.metric("Total Spent", f"{st.session_state.currency_symbol}0.00")
+            st.metric("Remaining", f"{st.session_state.currency_symbol}{st.session_state.current_budget:.2f}")
             st.write("0% of budget used")
             st.progress(0.0)
         else:
@@ -354,22 +371,59 @@ def streamlit_ui():
         # Show recent expenses with better formatting
         st.subheader("Recent Expenses")
         df_display_formatted = df_display.copy()
-        df_display_formatted["Amount"] = df_display_formatted["Amount"].apply(lambda x: f"${x:.2f}")
+        df_display_formatted["Amount"] = df_display_formatted["Amount"].apply(lambda x: f"{st.session_state.currency_symbol}{x:.2f}")
         st.dataframe(df_display_formatted, use_container_width=True, hide_index=True)
         
+        # Monthly analysis
+        st.divider()
+        st.subheader("Monthly Breakdown")
+        
+        df_with_month = df_display.copy()
+        df_with_month["Month"] = df_with_month["Date"].dt.to_period("M")
+        
+        monthly_summary = df_with_month.groupby("Month")["Amount"].sum().sort_index(ascending=False)
+        
+        col_monthly1, col_monthly2 = st.columns(2)
+        
+        with col_monthly1:
+            st.write("**Spending by Month**")
+            monthly_df = monthly_summary.reset_index()
+            monthly_df.columns = ["Month", "Amount"]
+            monthly_df["Month"] = monthly_df["Month"].astype(str)
+            monthly_df["Amount"] = monthly_df["Amount"].apply(lambda x: f"{st.session_state.currency_symbol}{x:.2f}")
+            st.dataframe(monthly_df, use_container_width=True, hide_index=True)
+        
+        with col_monthly2:
+            st.write("**Monthly Trend**")
+            monthly_numeric = df_with_month.groupby("Month")["Amount"].sum()
+            st.bar_chart(monthly_numeric, color="#4A90E2")
+        
         # Category breakdown
+        st.divider()
+        st.subheader("Analytics")
+        
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("Spending by Category")
+            st.write("**Spending by Category**")
             category_summary = st.session_state.expenses_df.groupby("Category")["Amount"].sum().sort_values(ascending=False)
-            st.bar_chart(category_summary)
+            
+            # Create bar chart with cool colors
+            cat_df = category_summary.reset_index()
+            cat_df.columns = ["Category", "Amount"]
+            
+            chart = alt.Chart(cat_df).mark_bar(color="#4A90E2").encode(
+                x=alt.X("Amount:Q"),
+                y=alt.Y("Category:N", sort="-x")
+            ).properties(height=300)
+            
+            st.altair_chart(chart, use_container_width=True)
         
         with col2:
-            st.subheader("Category Totals")
+            st.write("**Category Totals**")
             category_summary_df = category_summary.reset_index()
             category_summary_df.columns = ["Category", "Amount"]
-            category_summary_df["Amount"] = category_summary_df["Amount"].apply(lambda x: f"${x:.2f}")
+            category_summary_df["Amount"] = category_summary_df["Amount"].apply(lambda x: f"{st.session_state.currency_symbol}{x:.2f}")
             st.dataframe(category_summary_df, use_container_width=True, hide_index=True)
     else:
         st.info("No expenses yet. Add one to get started!")
