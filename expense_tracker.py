@@ -207,8 +207,8 @@ def streamlit_ui():
     # Exchange rates (to USD)
     EXCHANGE_RATES = {
         "USD": 1.0,
-        "NGN": 0.0006,  # 1 NGN = 0.0006 USD (approximate)
-        "GBP": 1.27     # 1 GBP = 1.27 USD (approximate)
+        "NGN": 1/1620,  # 1 USD = 1620 NGN (current rate)
+        "GBP": 1.27     # 1 GBP = 1.27 USD
     }
     
     # Categories from CLI
@@ -409,29 +409,39 @@ def streamlit_ui():
         df_display_formatted["Amount"] = df_display_formatted["Amount"].apply(lambda x: f"{st.session_state.currency_symbol}{x:.2f}")
         st.dataframe(df_display_formatted, use_container_width=True, hide_index=True)
         
-        # Monthly analysis
-        st.divider()
-        st.subheader("Monthly Breakdown")
-        
-        df_with_month = df_display.copy()
-        df_with_month["Month"] = df_with_month["Date"].dt.to_period("M")
-        
-        monthly_summary = df_with_month.groupby("Month")["Amount"].sum().sort_index(ascending=False)
-        
-        col_monthly1, col_monthly2 = st.columns(2)
-        
-        with col_monthly1:
-            st.write("**Spending by Month**")
-            monthly_df = monthly_summary.reset_index()
-            monthly_df.columns = ["Month", "Amount"]
-            monthly_df["Month"] = monthly_df["Month"].astype(str)
-            monthly_df["Amount"] = monthly_df["Amount"].apply(lambda x: f"{st.session_state.currency_symbol}{x:.2f}")
-            st.dataframe(monthly_df, use_container_width=True, hide_index=True)
-        
-        with col_monthly2:
-            st.write("**Monthly Trend**")
-            monthly_numeric = df_with_month.groupby("Month")["Amount"].sum()
-            st.bar_chart(monthly_numeric, color="#4A90E2")
+        # Monthly analysis (hidden by default, expandable)
+        with st.expander("Monthly Summary"):
+            df_with_month = df_display.copy()
+            df_with_month["Month"] = df_with_month["Date"].dt.to_period("M")
+            
+            monthly_summary = df_with_month.groupby("Month")["Amount"].sum().sort_index(ascending=False)
+            
+            col_monthly1, col_monthly2 = st.columns(2)
+            
+            with col_monthly1:
+                st.write("**Spending by Month**")
+                monthly_df = monthly_summary.reset_index()
+                monthly_df.columns = ["Month", "Amount"]
+                # Format month as "Month Year" (e.g., "May 2026")
+                monthly_df["Month"] = monthly_df["Month"].dt.strftime("%B %Y")
+                monthly_df["Amount"] = monthly_df["Amount"].apply(lambda x: f"{st.session_state.currency_symbol}{x:.2f}")
+                st.dataframe(monthly_df, use_container_width=True, hide_index=True)
+            
+            with col_monthly2:
+                st.write("**Monthly Trend**")
+                # Create a dataframe with formatted month names for the chart
+                monthly_for_chart = df_with_month.groupby("Month")["Amount"].sum().sort_index(ascending=False)
+                monthly_chart_df = monthly_for_chart.reset_index()
+                monthly_chart_df.columns = ["Month", "Amount"]
+                monthly_chart_df["Month"] = monthly_chart_df["Month"].dt.strftime("%b %Y")
+                monthly_chart_df = monthly_chart_df.sort_values("Month")
+                
+                chart = alt.Chart(monthly_chart_df).mark_bar(color="#4A90E2").encode(
+                    x=alt.X("Month:N", title="Month"),
+                    y=alt.Y("Amount:Q", title="Amount")
+                ).properties(height=300)
+                
+                st.altair_chart(chart, use_container_width=True)
         
         # Category breakdown
         st.divider()
