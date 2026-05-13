@@ -7,36 +7,32 @@ streamlit run expense_tracker.py
 
 ## Main Features Overview
 
-### 💰 Budget Management
+### Budget Management
 - **Set Budget**: Use +/− buttons or direct input field
 - **Clear Budget**: Clears the budget amount without removing expenses
 - **Choose Period**: Select Monthly or Weekly budget tracking
 - **View Days Remaining**: See how many days are left in your budget period
 
-### 🌍 Currency Support
+### Currency Support
 Supported currencies:
 - **USD** - Dollar ($)
 - **NGN** - Naira (₦) 
-- **GBP** - Pounds (£)
-- **EUR** - Euro (€)
-- **CAD** - Canadian Dollar (C$)
-- **AUD** - Australian Dollar (A$)
 
 Switch currencies anytime - all amounts auto-convert!
 
-### 📝 Add Expenses
+### Add Expenses
 1. Enter expense name
 2. Select category (Food, Home, Work, Transportation, Fun, Miscellaneous)
 3. Enter amount
 4. Select date (defaults to today)
 5. Click "Add Expense"
 
-### ✏️ Edit & Delete Entries
-- **Edit**: Click ✏️ button next to any expense
-- **Delete**: Click 🗑️ button next to any expense
+### Edit & Delete Entries
+- **Edit**: Click button next to any expense
+- **Delete**: Click button next to any expense
 - **Changes saved automatically** to CSV
 
-### 📊 Budget Status
+###  Budget Status
 Shows:
 - Total spent this period
 - Remaining budget
@@ -44,12 +40,12 @@ Shows:
 - Percentage of budget used
 - Color-coded warning status
 
-### 🗑️ Data Management
+###  Data Management
 - **Clear Budget**: Removes budget amount only
 - **Reset All Data**: Clears all expenses AND budget locally
-  - ⚠️ Requires confirmation
-  - ✓ Server data unaffected
-  - ✓ Clean slate for fresh start
+  - Requires confirmation
+  - Server data unaffected
+  - Clean slate for fresh start
 
 ### 📈 Analytics
 - **Monthly Summary**: Spending trends over time
