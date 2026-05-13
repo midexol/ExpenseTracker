@@ -408,7 +408,7 @@ def streamlit_ui():
                 category = st.selectbox("Category", CATEGORIES)
             
             with col_b:
-                amount = st.number_input("Amount", min_value=0.01, step=0.01, format="%.2f")
+                amount = st.number_input("Amount", min_value=0.01, step=100.00, format="%.2f")
                 name = st.text_input("Expense Name", placeholder="e.g., Groceries, Uber, Movie")
             
             submitted = st.form_submit_button("Add Expense", use_container_width=True)
