@@ -1,7 +1,5 @@
 from expenses import Expense
-import expenses
 from datetime import datetime, timedelta
-import sys
 import os
 import json
 
@@ -348,28 +346,6 @@ def streamlit_ui():
         remaining_days = get_remaining_days(st.session_state.budget_type)
         st.caption(f"Days remaining: {remaining_days}")
         
-        # Budget adjustment
-        col_budget1, col_budget2, col_budget3 = st.columns([1, 1, 1])
-        
-        with col_budget1:
-            if st.button("−", key="budget_minus", use_container_width=True):
-                st.session_state.current_budget = max(0.0, st.session_state.current_budget - 100.0)
-                save_budget_settings(st.session_state.current_budget, st.session_state.budget_type, BUDGET_FILE)
-                st.toast("Budget updated!")
-                st.rerun()
-        
-        with col_budget2:
-            st.write("")
-        
-        with col_budget3:
-            if st.button("+", key="budget_plus", use_container_width=True):
-                st.session_state.current_budget += 100.0
-                save_budget_settings(st.session_state.current_budget, st.session_state.budget_type, BUDGET_FILE)
-                st.toast("Budget updated!")
-                st.rerun()
-        
-        st.write(f"**{st.session_state.currency_symbol}{st.session_state.current_budget:.2f}**")
-        
         # Direct input field
         direct_budget = st.number_input(
             "Set Budget Directly",
@@ -432,7 +408,7 @@ def streamlit_ui():
                 category = st.selectbox("Category", CATEGORIES)
             
             with col_b:
-                amount = st.number_input("Amount", min_value=0.01, step=0.01, format="%.2f")
+                amount = st.number_input("Amount", value=0.0, min_value=0.01, step=0.01, format="%.2f")
                 name = st.text_input("Expense Name", placeholder="e.g., Groceries, Uber, Movie")
             
             submitted = st.form_submit_button("Add Expense", use_container_width=True)
@@ -512,7 +488,7 @@ def streamlit_ui():
         st.subheader("Recent Expenses")
         
         # Create a table with edit/delete buttons
-        for idx, row in df_display.iterrows():
+        for display_idx, (idx, row) in enumerate(df_display.iterrows()):
             col1, col2, col3, col4, col5 = st.columns([3, 2, 2, 1, 1])
             
             with col1:
@@ -522,11 +498,11 @@ def streamlit_ui():
             with col3:
                 st.write(f"{row['Date'].strftime('%Y-%m-%d')}")
             with col4:
-                if st.button("Edit", key=f"edit_{idx}", help="Edit entry"):
-                    # Store the index for editing
+                if st.button("Edit", key=f"edit_{display_idx}", help="Edit entry"):
+                    # Store the actual index from the original dataframe
                     st.session_state.edit_index = idx
             with col5:
-                if st.button("Delete", key=f"delete_{idx}", help="Delete entry"):
+                if st.button("Delete", key=f"delete_{display_idx}", help="Delete entry"):
                     # Delete the entry
                     st.session_state.expenses_df = st.session_state.expenses_df.drop(idx).reset_index(drop=True)
                     st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
