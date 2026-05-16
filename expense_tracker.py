@@ -205,17 +205,17 @@ def load_budget_settings(budget_file_path):
             if content.startswith("{"):
                 # JSON format with type
                 data = json.loads(content)
-                return data.get("amount", 0.0), data.get("type", "Monthly")
+                return data.get("amount", 0.0), data.get("type", "Monthly"), data.get("currency", "USD")
             else:
                 # Legacy format - just a number
-                return float(content), "Monthly"
+                return float(content), "Monthly", "USD"
     except (FileNotFoundError, ValueError, json.JSONDecodeError):
-        return 0.0, "Monthly"
+        return 0.0, "Monthly", "USD"
 
-def save_budget_settings(budget_amount, budget_type, budget_file_path):
+def save_budget_settings(budget_amount, budget_type, currency, budget_file_path):
     """Save budget and its type to file"""
     with open(budget_file_path, "w") as file:
-        data = {"amount": budget_amount, "type": budget_type}
+        data = {"amount": budget_amount, "type": budget_type, "currency": currency}
         file.write(json.dumps(data))
 
 def streamlit_ui():
@@ -253,17 +253,14 @@ def streamlit_ui():
     # Categories from CLI
     CATEGORIES = ["Food", "Home", "work", "transportation", "Fun", "miscellaneous"]
     
-    # Initialize session state for currency and base currency
-    if "currency" not in st.session_state:
-        st.session_state.currency = "USD"
-        st.session_state.currency_symbol = "$"
-        st.session_state.base_currency = "USD"  # Currency used for data entry
-    
-    # Initialize session state for budget and budget type
-    if "current_budget" not in st.session_state or "budget_type" not in st.session_state:
-        budget_amount, budget_type = load_budget_settings(BUDGET_FILE)
+    # Initialize session state for budget and currency
+    if "currency" not in st.session_state or "current_budget" not in st.session_state or "budget_type" not in st.session_state:
+        budget_amount, budget_type, currency = load_budget_settings(BUDGET_FILE)
         st.session_state.current_budget = budget_amount
         st.session_state.budget_type = budget_type
+        st.session_state.currency = currency
+        st.session_state.currency_symbol = "$" if currency == "USD" else "₦"
+        st.session_state.base_currency = currency  # Currency used for data entry
     
     # Initialize session state for expenses
     if "expenses_df" not in st.session_state:
@@ -297,7 +294,15 @@ def streamlit_ui():
             "Dollar ($)": ("USD", "$"),
             "Naira (₦)": ("NGN", "₦")
         }
-        selected_currency = st.radio("Select Currency", list(currency_map.keys()), label_visibility="collapsed")
+        
+        currency_options = list(currency_map.keys())
+        current_index = 0
+        for i, opt in enumerate(currency_options):
+            if currency_map[opt][0] == st.session_state.currency:
+                current_index = i
+                break
+                
+        selected_currency = st.radio("Select Currency", currency_options, index=current_index, label_visibility="collapsed")
         new_currency, new_symbol = currency_map[selected_currency]
         
         # Handle currency conversion - ONLY convert when currency actually changes
@@ -314,7 +319,7 @@ def streamlit_ui():
                 
                 # Update CSV with converted amounts
                 st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
-                save_budget_settings(st.session_state.current_budget, st.session_state.budget_type, BUDGET_FILE)
+                save_budget_settings(st.session_state.current_budget, st.session_state.budget_type, new_currency, BUDGET_FILE)
                 
                 st.session_state.base_currency = new_currency
                 st.success(f"Currency converted to {new_symbol}")
@@ -339,7 +344,7 @@ def streamlit_ui():
         
         if budget_type != st.session_state.budget_type:
             st.session_state.budget_type = budget_type
-            save_budget_settings(st.session_state.current_budget, budget_type, BUDGET_FILE)
+            save_budget_settings(st.session_state.current_budget, budget_type, st.session_state.currency, BUDGET_FILE)
             st.success(f"Budget period changed to {budget_type}")
         
         # Calculate and display remaining days
@@ -357,7 +362,7 @@ def streamlit_ui():
         
         if direct_budget != st.session_state.current_budget:
             st.session_state.current_budget = direct_budget
-            save_budget_settings(direct_budget, st.session_state.budget_type, BUDGET_FILE)
+            save_budget_settings(direct_budget, st.session_state.budget_type, st.session_state.currency, BUDGET_FILE)
             st.success("Budget updated!")
             st.rerun()
         
@@ -371,7 +376,7 @@ def streamlit_ui():
         with col_data1:
             if st.button("Clear Budget", use_container_width=True, key="clear_budget"):
                 st.session_state.current_budget = 0.0
-                save_budget_settings(0.0, st.session_state.budget_type, BUDGET_FILE)
+                save_budget_settings(0.0, st.session_state.budget_type, st.session_state.currency, BUDGET_FILE)
                 st.success("Budget cleared!")
                 st.rerun()
         
@@ -387,7 +392,7 @@ def streamlit_ui():
                         st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
                         # Reset budget
                         st.session_state.current_budget = 0.0
-                        save_budget_settings(0.0, "Monthly", BUDGET_FILE)
+                        save_budget_settings(0.0, "Monthly", "USD", BUDGET_FILE)
                         st.success("All local data has been reset!")
                         st.rerun()
                 with col_confirm2:
@@ -400,22 +405,23 @@ def streamlit_ui():
     with col1:
         st.header("Add New Expense")
         
-        with st.form("expense_form", clear_on_submit=True):
-            col_a, col_b = st.columns(2)
-            
-            with col_a:
-                date = st.date_input("Date", value=datetime.now())
-                category = st.selectbox("Category", CATEGORIES)
-            
-            with col_b:
-                amount = st.number_input("Amount", min_value=0.01, step=100.00, format="%.2f")
-                name = st.text_input("Expense Name", placeholder="e.g., Groceries, Uber, Movie")
-            
-            submitted = st.form_submit_button("Add Expense", use_container_width=True)
+        col_a, col_b = st.columns(2)
+        
+        with col_a:
+            date = st.date_input("Date", value=datetime.now())
+            category = st.selectbox("Category", CATEGORIES)
+        
+        with col_b:
+            amount = st.number_input("Amount", key="add_expense_amount", min_value=0.0, step=100.00, format="%.2f")
+            name = st.text_input("Expense Name", key="add_expense_name", placeholder="e.g., Groceries, Uber, Movie")
+        
+        submitted = st.button("Add Expense", use_container_width=True)
         
         if submitted:
             if not name:
                 st.error("Please enter an expense name")
+            elif amount <= 0:
+                st.error("Please enter a valid amount greater than 0")
             else:
                 # Create new row
                 new_row = pd.DataFrame({
@@ -434,6 +440,10 @@ def streamlit_ui():
                 # Save to CSV
                 st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
                 st.success(f"Added {st.session_state.currency_symbol}{amount} for {name}")
+                
+                # Reset inputs
+                st.session_state.add_expense_amount = 0.0
+                st.session_state.add_expense_name = ""
                 st.rerun()
     
     with col2:
@@ -525,7 +535,7 @@ def streamlit_ui():
                     new_category = st.selectbox("Category", CATEGORIES, index=CATEGORIES.index(expense['Category']))
                 
                 with col_b:
-                    new_amount = st.number_input("Amount", value=float(expense['Amount']), min_value=0.01, step=0.01, format="%.2f")
+                    new_amount = st.number_input("Amount", value=float(expense['Amount']), min_value=0.0, step=0.01, format="%.2f")
                     new_name = st.text_input("Expense Name", value=expense['Name'])
                 
                 col_submit1, col_submit2 = st.columns(2)
