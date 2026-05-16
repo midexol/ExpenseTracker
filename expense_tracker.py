@@ -205,12 +205,12 @@ def load_budget_settings(budget_file_path):
             if content.startswith("{"):
                 # JSON format with type
                 data = json.loads(content)
-                return data.get("amount", 0.0), data.get("type", "Monthly"), data.get("currency", "USD")
+                return data.get("amount", 0.0), data.get("type", "Monthly"), data.get("currency", "NGN")
             else:
                 # Legacy format - just a number
-                return float(content), "Monthly", "USD"
+                return float(content), "Monthly", "NGN"
     except (FileNotFoundError, ValueError, json.JSONDecodeError):
-        return 0.0, "Monthly", "USD"
+        return 0.0, "Monthly", "NGN"
 
 def save_budget_settings(budget_amount, budget_type, currency, budget_file_path):
     """Save budget and its type to file"""
@@ -392,7 +392,7 @@ def streamlit_ui():
                         st.session_state.expenses_df.to_csv(EXPENSE_FILE, index=False)
                         # Reset budget
                         st.session_state.current_budget = 0.0
-                        save_budget_settings(0.0, "Monthly", "USD", BUDGET_FILE)
+                        save_budget_settings(0.0, "Monthly", "NGN", BUDGET_FILE)
                         st.success("All local data has been reset!")
                         st.rerun()
                 with col_confirm2:
