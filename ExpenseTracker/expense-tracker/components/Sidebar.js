@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { CURRENCIES, getRemainingDays, saveBudgetSettings } from '../lib/expenses';
 
-export default function Sidebar({ budget, setBudget, currency, setCurrency, budgetType, setBudgetType, onReset }) {
+export default function Sidebar({ budget, setBudget, currency, setCurrency, budgetType, setBudgetType, onReset, resetConfirm }) {
   const [inputVal, setInputVal] = useState(budget.amount);
   const remainingDays = getRemainingDays(budgetType);
 
-  useEffect(() => {
-    setInputVal(budget.amount);
-  }, [budget.amount]);
+  useEffect(() => { setInputVal(budget.amount); }, [budget.amount]);
 
   const handleBudgetBlur = () => {
     const val = parseFloat(inputVal) || 0;
@@ -16,71 +14,81 @@ export default function Sidebar({ budget, setBudget, currency, setCurrency, budg
     saveBudgetSettings(updated);
   };
 
-  const handleCurrencyChange = (newCurrency) => {
-    setCurrency(newCurrency);
-    const updated = { ...budget, currency: newCurrency };
-    setBudget(updated);
-    saveBudgetSettings(updated);
+  const handleCurrencyChange = (c) => {
+    setCurrency(c);
+    saveBudgetSettings({ ...budget, currency: c });
   };
 
-  const handleTypeChange = (type) => {
-    setBudgetType(type);
-    const updated = { ...budget, type };
+  const handleTypeChange = (t) => {
+    setBudgetType(t);
+    const updated = { ...budget, type: t };
     setBudget(updated);
     saveBudgetSettings(updated);
   };
 
   return (
-    <aside style={{
+    <aside className="desktop-only" style={{
       width: 'var(--sidebar-width)',
       minHeight: '100vh',
-      background: 'var(--bg-card)',
-      borderRight: '1px solid var(--border)',
-      padding: '28px 20px',
+      background: 'rgba(255,255,255,0.04)',
+      backdropFilter: 'blur(24px)',
+      WebkitBackdropFilter: 'blur(24px)',
+      borderRight: '1px solid var(--glass-border)',
+      padding: '32px 24px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '32px',
+      gap: '36px',
       position: 'sticky',
       top: 0,
       flexShrink: 0,
+      zIndex: 10,
     }}>
+      {/* Logo */}
       <div>
-        <div style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '-0.5px', color: 'var(--accent)' }}>
+        <div style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '26px',
+          fontWeight: 700,
+          background: 'linear-gradient(135deg, #f59e0b, #e07a5f)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          letterSpacing: '-1px',
+        }}>
           xpnsr.
         </div>
-        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px', fontFamily: 'var(--font-mono)' }}>
-          expense tracker
+        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
+          personal finance tracker
         </div>
       </div>
 
       <Section label="Currency">
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           {Object.entries(CURRENCIES).map(([key, val]) => (
-            <Pill key={key} active={currency === key} onClick={() => handleCurrencyChange(key)}>
+            <ToggleBtn key={key} active={currency === key} onClick={() => handleCurrencyChange(key)}>
               {val.symbol} {key}
-            </Pill>
+            </ToggleBtn>
           ))}
         </div>
       </Section>
 
       <Section label="Budget Period">
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           {['Monthly', 'Weekly'].map(type => (
-            <Pill key={type} active={budgetType === type} onClick={() => handleTypeChange(type)}>
+            <ToggleBtn key={type} active={budgetType === type} onClick={() => handleTypeChange(type)}>
               {type}
-            </Pill>
+            </ToggleBtn>
           ))}
         </div>
-        <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '8px' }}>
+        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', fontFamily: 'var(--font-mono)' }}>
           {remainingDays} day{remainingDays !== 1 ? 's' : ''} remaining
         </div>
       </Section>
 
-      <Section label="Budget Amount">
+      <Section label="Monthly Budget">
         <div style={{ position: 'relative' }}>
           <span style={{
-            position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)',
-            color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '13px'
+            position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
+            color: 'var(--text-muted)', fontSize: '14px',
           }}>
             {CURRENCIES[currency].symbol}
           </span>
@@ -91,39 +99,45 @@ export default function Sidebar({ budget, setBudget, currency, setCurrency, budg
             onBlur={handleBudgetBlur}
             style={{
               width: '100%',
-              background: 'var(--bg-raised)',
-              border: '1px solid var(--border)',
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid var(--glass-border)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--text-primary)',
-              padding: '8px 10px 8px 26px',
+              padding: '10px 12px 10px 28px',
               fontSize: '14px',
               fontFamily: 'var(--font-mono)',
               outline: 'none',
-              transition: 'border-color 0.15s',
+              transition: 'border-color 0.2s, box-shadow 0.2s',
             }}
-            onFocus={e => e.target.style.borderColor = 'var(--border-focus)'}
+            onFocus={e => {
+              e.target.style.borderColor = 'var(--glass-border-focus)';
+              e.target.style.boxShadow = '0 0 0 3px var(--glow-amber)';
+            }}
+            onBlur={e => {
+              e.target.style.borderColor = 'var(--glass-border)';
+              e.target.style.boxShadow = 'none';
+              handleBudgetBlur();
+            }}
           />
         </div>
       </Section>
 
-      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ marginTop: 'auto' }}>
         <button
           onClick={onReset}
           style={{
             width: '100%',
-            padding: '8px',
+            padding: '10px',
             borderRadius: 'var(--radius-sm)',
-            border: '1px solid var(--border)',
-            color: 'var(--danger)',
+            border: resetConfirm ? '1px solid var(--danger)' : '1px solid var(--glass-border)',
+            color: resetConfirm ? 'var(--danger)' : 'var(--text-muted)',
             fontSize: '12px',
-            fontFamily: 'var(--font-display)',
             fontWeight: 500,
-            transition: 'background 0.15s',
+            transition: 'all 0.2s',
+            background: resetConfirm ? 'var(--danger-dim)' : 'transparent',
           }}
-          onMouseEnter={e => e.target.style.background = 'var(--danger-dim)'}
-          onMouseLeave={e => e.target.style.background = 'transparent'}
         >
-          Reset all data
+          {resetConfirm ? '⚠ Tap again to confirm reset' : 'Reset all data'}
         </button>
       </div>
     </aside>
@@ -133,7 +147,7 @@ export default function Sidebar({ budget, setBudget, currency, setCurrency, budg
 function Section({ label, children }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+      <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
         {label}
       </div>
       {children}
@@ -141,23 +155,20 @@ function Section({ label, children }) {
   );
 }
 
-function Pill({ active, onClick, children }) {
+function ToggleBtn({ active, onClick, children }) {
   return (
-    <button
-      onClick={onClick}
-      style={{
-        flex: 1,
-        padding: '6px 10px',
-        borderRadius: 'var(--radius-sm)',
-        border: active ? '1px solid var(--accent)' : '1px solid var(--border)',
-        background: active ? 'var(--accent-dim)' : 'transparent',
-        color: active ? 'var(--accent)' : 'var(--text-secondary)',
-        fontSize: '12px',
-        fontWeight: active ? 600 : 400,
-        transition: 'all 0.15s',
-        cursor: 'pointer',
-      }}
-    >
+    <button onClick={onClick} style={{
+      flex: 1,
+      padding: '8px 10px',
+      borderRadius: 'var(--radius-sm)',
+      border: active ? '1px solid rgba(245,158,11,0.5)' : '1px solid var(--glass-border)',
+      background: active ? 'linear-gradient(135deg, rgba(245,158,11,0.2), rgba(224,122,95,0.15))' : 'transparent',
+      color: active ? 'var(--accent)' : 'var(--text-muted)',
+      fontSize: '12px',
+      fontWeight: active ? 600 : 400,
+      transition: 'all 0.2s',
+      cursor: 'pointer',
+    }}>
       {children}
     </button>
   );
