@@ -1,0 +1,50 @@
+.frame {
+  --c: var(--cut);
+  position: relative;
+  background: var(--border);
+  clip-path: polygon(
+    var(--c) 0,
+    100% 0,
+    100% calc(100% - var(--c)),
+    calc(100% - var(--c)) 100%,
+    0 100%,
+    0 var(--c)
+  );
+  padding: 2px;
+}
+
+.frame.accentGold {
+  background: var(--gold);
+}
+.frame.accentEmerald {
+  background: var(--emerald);
+}
+.frame.accentCoral {
+  background: var(--coral);
+}
+.frame.accentViolet {
+  background: var(--violet);
+}
+
+.inner {
+  --c: var(--cut);
+  background: var(--panel);
+  clip-path: polygon(
+    var(--c) 0,
+    100% 0,
+    100% calc(100% - var(--c)),
+    calc(100% - var(--c)) 100%,
+    0 100%,
+    0 var(--c)
+  );
+  padding: 1.25rem;
+  height: 100%;
+}
+
+.small {
+  --c: var(--cut-sm);
+}
+
+.small > .inner {
+  padding: 0.85rem;
+}

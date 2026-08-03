@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  passwordHash   String
+  name           String
+  xp             Int      @default(0)
+  coins          Int      @default(0)
+  currentStreak  Int      @default(0)
+  longestStreak  Int      @default(0)
+  lastActiveDate String? // "YYYY-MM-DD" in the user's local day
+  timezoneOffset Int      @default(0) // minutes, JS getTimezoneOffset() convention
+  createdAt      DateTime @default(now())
+
+  expenses          Expense[]
+  budget            Budget?
+  todos             Todo[]
+  achievements      UserAchievement[]
+  pushSubscriptions PushSubscription[]
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  category  String
+  amount    Float
+  currency  String   @default("NGN")
+  date      String // "YYYY-MM-DD"
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+model Budget {
+  id       String @id @default(cuid())
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount   Float
+  period   String @default("Monthly") // "Weekly" | "Monthly"
+  currency String @default("NGN")
+}
+
+model Todo {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  notes       String?
+  dueDate     String? // "YYYY-MM-DD"
+  priority    String    @default("Med") // "Low" | "Med" | "High"
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  xpValue     Int       @default(10)
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, completed])
+}
+
+model Achievement {
+  id          String @id @default(cuid())
+  key         String @unique
+  name        String
+  description String
+  icon        String
+  xpReward    Int    @default(0)
+  coinReward  Int    @default(0)
+  sortOrder   Int    @default(0)
+
+  unlocks UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}

@@ -1,0 +1,30 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.55rem;
+  border: 1.5px solid currentColor;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.gold {
+  color: var(--gold);
+}
+.emerald {
+  color: var(--emerald);
+}
+.coral {
+  color: var(--coral);
+}
+.violet {
+  color: var(--violet);
+}
+.blue {
+  color: var(--blue);
+}

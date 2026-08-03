@@ -1,0 +1,106 @@
+:root {
+  --bg: #0f1115;
+  --bg-alt: #14161c;
+  --panel: #171a21;
+  --panel-alt: #1d212b;
+  --border: #2a2e38;
+  --border-light: #3a3f4c;
+
+  --text: #f4f4f5;
+  --text-dim: #9a9fae;
+  --text-faint: #5b5f6b;
+
+  --gold: #f5b700;
+  --gold-ink: #1a1400;
+  --emerald: #2ed573;
+  --emerald-ink: #06210f;
+  --coral: #ff5d5d;
+  --coral-ink: #2b0d0d;
+  --violet: #8c7ae6;
+  --violet-ink: #17123a;
+  --blue: #4fa3f7;
+
+  --cut: 14px;
+  --cut-sm: 9px;
+
+  --font-display: var(--font-space-grotesk), "Segoe UI", sans-serif;
+  --font-body: var(--font-inter), "Segoe UI", sans-serif;
+
+  color-scheme: dark;
+}
+
+html {
+  height: 100%;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100%;
+  color: var(--text);
+  background: var(--bg);
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0);
+  background-size: 22px 22px;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  color: inherit;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--gold-ink);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border: 2px solid var(--bg);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

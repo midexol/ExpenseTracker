@@ -1,0 +1,75 @@
+.stack {
+  position: fixed;
+  top: 5.5rem;
+  right: 1rem;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: min(340px, calc(100vw - 2rem));
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: pop-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.icon {
+  width: 2.4rem;
+  height: 2.4rem;
+  flex-shrink: 0;
+  color: var(--gold-ink);
+  background: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.rewards {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.close {
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.2rem;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}

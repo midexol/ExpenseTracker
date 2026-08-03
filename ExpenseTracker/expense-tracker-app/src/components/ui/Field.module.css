@@ -1,0 +1,46 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+.control {
+  background: var(--bg-alt);
+  border: 2px solid var(--border-light);
+  color: var(--text);
+  padding: 0.6rem 0.7rem;
+  font-size: 0.92rem;
+  outline: none;
+  width: 100%;
+}
+
+.control:focus {
+  border-color: var(--gold);
+}
+
+.control::placeholder {
+  color: var(--text-faint);
+}
+
+.error {
+  color: var(--coral);
+  font-size: 0.78rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.row > .field {
+  flex: 1;
+}
