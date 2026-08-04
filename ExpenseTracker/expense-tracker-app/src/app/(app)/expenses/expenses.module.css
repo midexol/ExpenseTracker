@@ -1,0 +1,144 @@
+.grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 820px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: sticky;
+  top: 8.5rem;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.budgetRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-top: 0.6rem;
+}
+
+.budgetAmount {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.statusOk {
+  color: var(--emerald);
+}
+.statusWarning {
+  color: var(--gold);
+}
+.statusOver {
+  color: var(--coral);
+}
+
+.formActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.filterRow label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.filterRow select {
+  max-width: 200px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 90px 1fr auto auto auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowDate {
+  font-size: 0.78rem;
+  color: var(--text-faint);
+  font-family: var(--font-display);
+}
+
+.rowName {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowAmount {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--emerald);
+  white-space: nowrap;
+}
+
+.rowActions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.iconBtn {
+  background: none;
+  border: 1.5px solid var(--border-light);
+  color: var(--text-dim);
+  width: 1.9rem;
+  height: 1.9rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconBtn:hover {
+  color: var(--text);
+  border-color: var(--text-dim);
+}
+
+.empty {
+  color: var(--text-faint);
+  padding: 2rem 0;
+  text-align: center;
+}

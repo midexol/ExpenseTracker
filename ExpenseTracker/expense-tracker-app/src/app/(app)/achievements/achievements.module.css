@@ -1,0 +1,62 @@
+.pageHeader {
+  margin-bottom: 1.25rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+
+.locked {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.iconWrap {
+  width: 2.6rem;
+  height: 2.6rem;
+  flex-shrink: 0;
+  background: var(--gold);
+  color: var(--gold-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.locked .iconWrap {
+  background: var(--border-light);
+  color: var(--text-faint);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.desc {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 0.2rem;
+}
+
+.rewards {
+  font-size: 0.72rem;
+  color: var(--gold);
+  margin-top: 0.4rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.unlockedDate {
+  font-size: 0.68rem;
+  color: var(--text-faint);
+  margin-top: 0.3rem;
+}

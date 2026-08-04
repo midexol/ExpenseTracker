@@ -1,0 +1,32 @@
+.wrap {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+  gap: 2rem;
+}
+
+.brand {
+  text-align: center;
+}
+
+.brand h1 {
+  font-size: 2rem;
+}
+
+.brand h1 span {
+  color: var(--gold);
+}
+
+.brand p {
+  color: var(--text-dim);
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+}

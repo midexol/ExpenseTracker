@@ -1,0 +1,162 @@
+"use client";
+
+import { useEffect, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { Panel } from "@/components/ui/Panel";
+import { Field, Input, Select } from "@/components/ui/Field";
+import { Button } from "@/components/ui/Button";
+import { useAppData } from "@/lib/AppDataContext";
+import { usePushSubscription } from "@/lib/usePushSubscription";
+import { apiRequest } from "@/lib/apiClient";
+import { CURRENCIES } from "@/lib/constants";
+import type { Budget } from "@/lib/types";
+import styles from "./settings.module.css";
+
+export default function SettingsPage() {
+  const router = useRouter();
+  const { me } = useAppData();
+  const push = usePushSubscription();
+
+  const [amount, setAmount] = useState("");
+  const [period, setPeriod] = useState<"Weekly" | "Monthly">("Monthly");
+  const [currency, setCurrency] = useState("NGN");
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    apiRequest<{ budget: Budget | null }>("/api/budget").then((data) => {
+      if (data.budget) {
+        setAmount(String(data.budget.amount));
+        setPeriod(data.budget.period);
+        setCurrency(data.budget.currency);
+      }
+    });
+  }, []);
+
+  async function handleSaveBudget(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setSaved(false);
+    setSaving(true);
+    try {
+      await apiRequest("/api/budget", {
+        method: "PUT",
+        body: JSON.stringify({ amount: parseFloat(amount) || 0, period, currency }),
+      });
+      setSaved(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+    router.refresh();
+  }
+
+  return (
+    <div>
+      <div className={styles.pageHeader}>
+        <h1>Settings</h1>
+      </div>
+
+      <div className={styles.grid}>
+        <Panel accent="emerald">
+          <h3>Budget</h3>
+          <form className={styles.form} onSubmit={handleSaveBudget}>
+            {error ? <div className={styles.errorMsg}>{error}</div> : null}
+            {saved ? <div className={styles.saveMsg}>Budget saved.</div> : null}
+            <Field label="Amount" htmlFor="budget-amount">
+              <Input
+                id="budget-amount"
+                type="number"
+                min="0"
+                step="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+            </Field>
+            <Field label="Period" htmlFor="budget-period">
+              <Select id="budget-period" value={period} onChange={(e) => setPeriod(e.target.value as "Weekly" | "Monthly")}>
+                <option value="Weekly">Weekly</option>
+                <option value="Monthly">Monthly</option>
+              </Select>
+            </Field>
+            <Field label="Currency" htmlFor="budget-currency">
+              <Select id="budget-currency" value={currency} onChange={(e) => setCurrency(e.target.value)}>
+                {Object.keys(CURRENCIES).map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <Button type="submit" variant="emerald" disabled={saving}>
+              {saving ? "Saving..." : "Save budget"}
+            </Button>
+          </form>
+        </Panel>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+          <Panel accent="gold">
+            <h3>Profile</h3>
+            <div style={{ marginTop: "0.6rem" }}>
+              <div className={styles.profileRow}>
+                <span className={styles.profileLabel}>Name</span>
+                <span>{me?.name}</span>
+              </div>
+              <div className={styles.profileRow}>
+                <span className={styles.profileLabel}>Email</span>
+                <span>{me?.email}</span>
+              </div>
+              <div className={styles.profileRow}>
+                <span className={styles.profileLabel}>Level</span>
+                <span>{me?.level}</span>
+              </div>
+              <div className={styles.profileRow}>
+                <span className={styles.profileLabel}>Longest streak</span>
+                <span>{me?.longestStreak} days</span>
+              </div>
+            </div>
+            <Button variant="danger" size="sm" style={{ marginTop: "1rem" }} onClick={handleLogout}>
+              Log out
+            </Button>
+          </Panel>
+
+          <Panel accent="violet">
+            <h3>Notifications</h3>
+            <div className={styles.pushRow}>
+              <span className={`${styles.pushStatus} ${push.subscribed ? styles.statOn : ""}`}>
+                {!push.supported
+                  ? "Not supported in this browser"
+                  : push.loading
+                  ? "Checking..."
+                  : push.subscribed
+                  ? "Reminders are ON"
+                  : "Reminders are OFF"}
+              </span>
+              {push.supported ? (
+                <Button
+                  variant={push.subscribed ? "ghost" : "violet"}
+                  size="sm"
+                  onClick={push.subscribed ? push.unsubscribe : push.subscribe}
+                >
+                  {push.subscribed ? "Turn off" : "Turn on"}
+                </Button>
+              ) : null}
+            </div>
+            {push.error ? <div className={styles.errorMsg} style={{ marginTop: "0.5rem" }}>{push.error}</div> : null}
+            <p style={{ fontSize: "0.78rem", color: "var(--text-faint)", marginTop: "0.6rem" }}>
+              We&apos;ll nudge you about quests due today and remind you to log spending if you haven&apos;t by
+              the evening.
+            </p>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}

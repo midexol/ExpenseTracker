@@ -143,7 +143,7 @@ export const ACHIEVEMENT_DEFS: AchievementDef[] = [
   { key: "budget_boss", name: "Budget Boss", description: "Stay under budget for the current period.", icon: "chest", xpReward: 40, coinReward: 30, sortOrder: 15, check: (s) => s.underBudgetThisPeriod },
 ];
 
-function periodStartDate(period: string): string {
+export function periodStartDate(period: string): string {
   const now = new Date();
   if (period === "Weekly") {
     const day = now.getUTCDay();

@@ -1,6 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { prisma } from "./prisma";
 
 const COOKIE_NAME = "questlog_session";
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
@@ -53,12 +52,6 @@ export async function getSessionUserId(): Promise<string | null> {
   if (!token) return null;
   const payload = await verifySessionToken(token);
   return payload?.userId ?? null;
-}
-
-export async function getSessionUser() {
-  const userId = await getSessionUserId();
-  if (!userId) return null;
-  return prisma.user.findUnique({ where: { id: userId } });
 }
 
 export const SESSION_COOKIE_NAME = COOKIE_NAME;

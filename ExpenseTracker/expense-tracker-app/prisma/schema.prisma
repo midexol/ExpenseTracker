@@ -19,6 +19,10 @@ model User {
   timezoneOffset Int      @default(0) // minutes, JS getTimezoneOffset() convention
   createdAt      DateTime @default(now())
 
+  // Reminder de-duplication: last local date ("YYYY-MM-DD") a reminder of each kind was sent
+  lastTodoReminderDate    String?
+  lastExpenseReminderDate String?
+
   expenses          Expense[]
   budget            Budget?
   todos             Todo[]

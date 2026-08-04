@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Quest Log
 
-## Getting Started
+A gamified expense tracker and quest (todo) list. Log spending, complete quests, keep your
+streak alive, and unlock achievements. Built with Next.js 16 (App Router), TypeScript, Prisma +
+SQLite, and real Web Push notifications — no UI framework, hand-written CSS design system.
 
-First, run the development server:
+## Getting started
 
 ```bash
+npm install
+npx prisma migrate dev   # creates prisma/dev.db and applies the schema
+npx tsx prisma/seed.ts   # seeds the achievement definitions
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) — you'll land on `/login`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy `.env.example` to `.env` and fill in real values:
 
-## Learn More
+- `DATABASE_URL` — SQLite file path, e.g. `file:./prisma/dev.db`. Swap the `provider` in
+  `prisma/schema.prisma` (and the adapter in `src/lib/prisma.ts`) if you'd rather point this at
+  Postgres/MySQL for production.
+- `SESSION_SECRET` — random string used to sign session JWTs.
+- `CRON_SECRET` — random string; the reminders cron endpoint requires this as a bearer token.
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` — generate with
+  `npx web-push generate-vapid-keys`.
 
-To learn more about Next.js, take a look at the following resources:
+## Reminders
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`/api/cron/reminders` checks every user with an active push subscription and sends:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- a nudge if they have quests due today/overdue, and
+- a nudge in the evening (local time) if they haven't logged any spending yet that day.
 
-## Deploy on Vercel
+It's guarded by `CRON_SECRET` (sent as `Authorization: Bearer <secret>`). `vercel.json` wires up
+an hourly Vercel Cron job hitting this route in production. If you're not on Vercel, point any
+external scheduler (cron-job.org, GitHub Actions, etc.) at the same URL with that header.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Design
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The UI is a hand-built "HUD" theme (cut-corner panels, flat accent colors, no gradients, no
+component library) living in `src/components/ui` and `src/app/globals.css`. Gamification logic
+(XP curve, streaks, achievement checks) is centralized in `src/lib/gamification.ts`.

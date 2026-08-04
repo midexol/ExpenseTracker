@@ -1,0 +1,137 @@
+.grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 820px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.side {
+  position: sticky;
+  top: 8.5rem;
+}
+
+.pageHeader {
+  margin-bottom: 1.25rem;
+}
+
+.sectionTitle {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.sectionTitle:first-child {
+  margin-top: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.checkbox {
+  width: 1.4rem;
+  height: 1.4rem;
+  border: 2px solid var(--border-light);
+  background: var(--bg-alt);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--violet);
+  flex-shrink: 0;
+}
+
+.checkboxChecked {
+  border-color: var(--violet);
+  background: var(--violet-ink);
+}
+
+.titleBlock {
+  min-width: 0;
+}
+
+.title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titleDone {
+  color: var(--text-faint);
+  text-decoration: line-through;
+}
+
+.notes {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.due {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+.dueOverdue {
+  color: var(--coral);
+}
+
+.actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.iconBtn {
+  background: none;
+  border: 1.5px solid var(--border-light);
+  color: var(--text-dim);
+  width: 1.9rem;
+  height: 1.9rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconBtn:hover {
+  color: var(--text);
+  border-color: var(--text-dim);
+}
+
+.empty {
+  color: var(--text-faint);
+  padding: 1.25rem 0;
+}
+
+.xpTag {
+  font-size: 0.68rem;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-weight: 700;
+  white-space: nowrap;
+}
