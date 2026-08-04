@@ -47,6 +47,39 @@
   border-bottom: none;
 }
 
+@media (max-width: 580px) {
+  .row {
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 0.35rem 0.6rem;
+    padding: 0.85rem 0;
+  }
+  .checkbox {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+  .titleBlock {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .priorityBadge, .xpTag {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+  .due {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .actions {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: end;
+  }
+}
+
+
 .checkbox {
   width: 1.4rem;
   height: 1.4rem;

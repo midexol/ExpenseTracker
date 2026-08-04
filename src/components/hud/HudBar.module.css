@@ -128,3 +128,41 @@
   color: var(--coral);
   border-color: var(--coral);
 }
+
+@media (max-width: 640px) {
+  .top {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+  .logo {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+  }
+  .logoutBtn {
+    grid-column: 3 / span 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+  .levelBadge {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .xpBlock {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+  }
+  .statCoin {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: center;
+  }
+  .statStreak {
+    grid-column: 4;
+    grid-row: 2;
+    justify-self: end;
+  }
+}
+

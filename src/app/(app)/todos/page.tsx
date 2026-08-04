@@ -185,7 +185,7 @@ export default function TodosPage() {
                   <div className={styles.title}>{todo.title}</div>
                   {todo.notes ? <div className={styles.notes}>{todo.notes}</div> : null}
                 </div>
-                <Badge color={PRIORITY_COLOR[todo.priority]}>{todo.priority}</Badge>
+                <Badge className={styles.priorityBadge} color={PRIORITY_COLOR[todo.priority]}>{todo.priority}</Badge>
                 <span className={`${styles.due} ${todo.dueDate && todo.dueDate < today ? styles.dueOverdue : ""}`}>
                   {todo.dueDate ?? ""}
                 </span>

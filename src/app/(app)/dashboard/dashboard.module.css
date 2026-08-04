@@ -99,6 +99,21 @@
   width: 90px;
 }
 
+@media (max-width: 480px) {
+  .quickForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .quickForm input,
+  .quickForm select {
+    width: 100% !important;
+  }
+  .quickAmountInput {
+    width: 100% !important;
+  }
+}
+
+
 .chartRow {
   display: flex;
   align-items: center;

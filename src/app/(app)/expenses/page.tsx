@@ -271,7 +271,7 @@ export default function ExpensesPage() {
                 <div className={styles.row} key={expense.id}>
                   <span className={styles.rowDate}>{expense.date.slice(5)}</span>
                   <span className={styles.rowName}>{expense.name}</span>
-                  <Badge style={{ color: CATEGORY_COLORS[expense.category] }}>{expense.category}</Badge>
+                  <Badge className={styles.rowCategory} style={{ color: CATEGORY_COLORS[expense.category] }}>{expense.category}</Badge>
                   <span className={styles.rowAmount}>{formatCurrency(expense.amount, expense.currency)}</span>
                   <div className={styles.rowActions}>
                     <button className={styles.iconBtn} onClick={() => startEdit(expense)} aria-label="Edit">

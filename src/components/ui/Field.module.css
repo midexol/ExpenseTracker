@@ -44,3 +44,11 @@
 .row > .field {
   flex: 1;
 }
+
+@media (max-width: 480px) {
+  .row {
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+}
+
