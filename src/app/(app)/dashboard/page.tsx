@@ -132,7 +132,7 @@ export default function DashboardPage() {
               </div>
               <div className={styles.statBox}>
                 <div className={styles.statBoxVal}>100 / 100</div>
-                <div className={styles.statBoxLbl}>Mana Reserves</div>
+                <div className={styles.statBoxLbl}>Budget Capacity</div>
               </div>
               <div className={styles.statBox}>
                 <div className={styles.statBoxVal}>{me?.currentStreak ?? 0} Days</div>
