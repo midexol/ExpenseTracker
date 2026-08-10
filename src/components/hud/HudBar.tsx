@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { href: "/todos", label: "Quest Log", icon: "quests" },
   { href: "/expenses", label: "Gold Tracker", icon: "gold" },
   { href: "/habits", label: "Habit Rituals", icon: "habits" },
-  { href: "/habits?tab=75hard", label: "75 Hard", icon: "hard" },
+  { href: "/75hard", label: "75 Hard", icon: "hard" },
   { href: "/settings", label: "Settings", icon: "settings" },
 ];
 

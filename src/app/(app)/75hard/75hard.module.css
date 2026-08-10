@@ -1,0 +1,296 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-bottom: 3rem;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.pageHeader h1 {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+}
+
+.pageHeader p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.heroCard {
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 2rem;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: none !important;
+}
+
+.questlineBanner {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--highlight);
+  text-transform: uppercase;
+}
+
+.dayTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dayTitle {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.dayTitle span {
+  font-size: 1.5rem;
+  color: var(--text-dim);
+}
+
+.attemptBadge {
+  background: var(--panel-alt);
+  border: 1.5px solid var(--border-light);
+  padding: 0.5rem 1rem;
+  border-radius: var(--pill-radius);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--highlight);
+}
+
+.subtext {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.progressBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.progressTextRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  font-weight: 800;
+  font-family: var(--font-display);
+}
+
+.directivesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.directiveCard {
+  background: var(--panel-alt);
+  border: 1.5px solid var(--border-light);
+  border-radius: 16px;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.directiveCard:hover {
+  border-color: var(--highlight);
+}
+
+.directiveCardChecked {
+  border-color: var(--highlight);
+  background: rgba(24, 173, 242, 0.1);
+}
+
+.directiveInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.directiveTitle {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.directiveSub {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.checkCircle {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--highlight);
+  flex-shrink: 0;
+}
+
+.checkCircleChecked {
+  border-color: var(--highlight);
+  background: var(--highlight);
+  color: #061014;
+}
+
+/* Analytics Section */
+.analyticsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .analyticsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.statCard {
+  background: var(--panel);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--card-radius);
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.statVal {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--highlight);
+}
+
+.statLbl {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+}
+
+.masterGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.masterRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.masterRowLabel {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-dim);
+}
+
+.daysContainer {
+  display: grid;
+  grid-template-columns: repeat(25, 1fr);
+  gap: 4px;
+}
+
+@media (max-width: 768px) {
+  .daysContainer {
+    grid-template-columns: repeat(13, 1fr);
+  }
+}
+
+.daySquare {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-dim);
+}
+
+.daySquareDone {
+  background: var(--highlight);
+  color: #061014;
+  border-color: var(--highlight);
+}
+
+.daySquareCurrent {
+  border-color: var(--highlight);
+  color: var(--highlight);
+}
+
+/* Fail Modal */
+.failModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.failModalCard {
+  background: var(--panel);
+  border: 2px solid var(--coral);
+  border-radius: var(--card-radius);
+  padding: 2.25rem;
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: none !important;
+}
+
+.failTitle {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: var(--coral);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.failBody {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}

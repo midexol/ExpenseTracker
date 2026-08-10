@@ -6,24 +6,24 @@
 
 .label {
   font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-dim);
 }
 
 .control {
-  background: rgba(0, 0, 0, 0.25);
-  border: 1.5px solid var(--border-light);
+  background: var(--panel-alt);
+  border: 1.5px solid var(--border);
   border-radius: 14px;
   color: var(--text);
   padding: 0.65rem 0.9rem;
   font-size: 0.9rem;
   outline: none;
   width: 100%;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  min-height: 42px;
+  transition: border-color 0.2s ease;
+  min-height: 44px;
 }
 
 .control:focus {
@@ -32,6 +32,14 @@
 
 .control::placeholder {
   color: var(--text-faint);
+}
+
+.control option {
+  background-color: #0C1E29 !important;
+  color: #E0EBF0 !important;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .error {

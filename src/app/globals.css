@@ -106,6 +106,17 @@ select {
   color: inherit;
 }
 
+option {
+  background-color: #0C1E29 !important;
+  color: #E0EBF0 !important;
+  padding: 0.5rem;
+}
+
+[data-theme="light"] option {
+  background-color: #FFFFFF !important;
+  color: #061014 !important;
+}
+
 ::selection {
   background: var(--primary);
   color: var(--primary-ink);
