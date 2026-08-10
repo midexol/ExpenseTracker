@@ -1,21 +1,22 @@
 :root {
-  --bg: #0d0e12;
-  --bg-alt: #13151c;
-  --panel: #161720;
-  --panel-alt: #1e202d;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-light: rgba(255, 255, 255, 0.14);
+  --bg: #090A0D;
+  --bg-alt: #11131A;
+  --panel: #141620;
+  --panel-alt: #1B1E2B;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-light: rgba(255, 255, 255, 0.16);
 
-  /* Bento Block Accents */
-  --bento-forest: #1C2D22;
-  --bento-forest-light: #253C2D;
-  --bento-crimson: #8C2626;
-  --bento-crimson-light: #A33030;
-  --bento-slate: #161720;
-  --bento-cream: #F5EFE6;
-  --bento-cream-dark: #E6DFD3;
+  /* Curated Bento Block Gradients */
+  --bento-forest: linear-gradient(145deg, #1A2D21, #132219);
+  --bento-forest-solid: #1A2D21;
+  --bento-crimson: linear-gradient(145deg, #912525, #751E1E);
+  --bento-crimson-solid: #912525;
+  --bento-slate: linear-gradient(145deg, #161722, #11121B);
+  --bento-slate-solid: #161722;
+  --bento-cream: linear-gradient(145deg, #F6F0E7, #EAE2D5);
+  --bento-cream-solid: #F6F0E7;
 
-  --text: #F5EFE6;
+  --text: #F6F0E7;
   --text-dim: #A6ACBC;
   --text-faint: #636A7B;
 
@@ -29,8 +30,8 @@
   --violet-ink: #1A082E;
   --blue: #3B82F6;
 
-  --bento-radius: 28px;
-  --bento-radius-sm: 18px;
+  --bento-radius: 32px;
+  --bento-radius-sm: 20px;
   --pill-radius: 9999px;
 
   --font-display: var(--font-space-grotesk), "Segoe UI", sans-serif;
@@ -53,8 +54,8 @@ body {
   min-height: 100%;
   color: var(--text);
   background: var(--bg);
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.03) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0);
+  background-size: 26px 26px;
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -76,8 +77,8 @@ h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.015em;
+  font-weight: 800;
+  letter-spacing: -0.025em;
   line-height: 1.15;
 }
 
@@ -90,7 +91,7 @@ select {
 }
 
 ::selection {
-  background: var(--bento-cream);
+  background: #F6F0E7;
   color: #12131A;
 }
 
@@ -102,7 +103,7 @@ select {
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.16);
   border-radius: var(--pill-radius);
 }
 

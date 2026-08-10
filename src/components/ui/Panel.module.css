@@ -1,59 +1,60 @@
 .bentoCard {
-  background: var(--panel);
+  background: var(--bento-slate);
   border: 1.5px solid var(--border);
   border-radius: var(--bento-radius);
-  padding: 1.5rem;
+  padding: 1.75rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .bentoCard:hover {
   border-color: var(--border-light);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
 }
 
 .small {
   border-radius: var(--bento-radius-sm);
-  padding: 1rem;
+  padding: 1.25rem;
 }
 
-/* Color Block Accents */
+/* Curated Bento Block Accents */
 .accentForest {
   background: var(--bento-forest);
-  border-color: rgba(35, 60, 45, 0.8);
-  color: #F5EFE6;
+  border-color: rgba(45, 80, 58, 0.6);
+  color: #F6F0E7;
 }
 
 .accentCrimson {
   background: var(--bento-crimson);
-  border-color: rgba(163, 48, 48, 0.8);
-  color: #F5EFE6;
+  border-color: rgba(180, 50, 50, 0.6);
+  color: #F6F0E7;
 }
 
 .accentGold {
-  background: #1F1B0F;
-  border-color: rgba(245, 183, 0, 0.3);
+  background: linear-gradient(145deg, #221D10, #171309);
+  border-color: rgba(245, 183, 0, 0.35);
 }
 
 .accentEmerald {
-  background: #112219;
-  border-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(145deg, #13271D, #0B1912);
+  border-color: rgba(16, 185, 129, 0.35);
 }
 
 .accentCoral {
-  background: #271416;
-  border-color: rgba(255, 71, 87, 0.3);
+  background: linear-gradient(145deg, #2C1518, #1E0C0E);
+  border-color: rgba(255, 71, 87, 0.35);
 }
 
 .accentViolet {
-  background: #1E132B;
-  border-color: rgba(138, 43, 226, 0.3);
+  background: linear-gradient(145deg, #221433, #150B21);
+  border-color: rgba(138, 43, 226, 0.35);
 }
 
 .accentCream {
   background: var(--bento-cream);
-  border-color: var(--bento-cream-dark);
+  border-color: #E2D9CB;
   color: #12131A;
 }
 

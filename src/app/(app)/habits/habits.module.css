@@ -16,7 +16,7 @@
 }
 
 .headerTitle h1 {
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 800;
   color: var(--text);
   margin: 0;
@@ -24,55 +24,57 @@
 
 .headerTitle p {
   color: var(--text-dim);
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   margin: 0.2rem 0 0 0;
 }
 
 /* Tabs */
 .tabNav {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
   background: var(--bg-alt);
-  padding: 0.35rem;
-  border-radius: 12px;
-  border: 1px solid var(--border-light);
+  padding: 0.4rem;
+  border-radius: var(--pill-radius);
+  border: 1.5px solid var(--border-light);
 }
 
 .tabBtn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.55rem 1.1rem;
-  border-radius: 8px;
-  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--pill-radius);
+  border: 1px solid transparent;
   background: transparent;
   color: var(--text-dim);
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.22s ease;
 }
 
 .tabBtn:hover {
   color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .tabBtnActive {
-  background: var(--bg-panel);
-  color: var(--text);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  border: 1px solid var(--border);
+  background: var(--bento-cream-solid);
+  color: #12131A;
+  box-shadow: 0 4px 14px rgba(246, 240, 231, 0.25);
+  border-color: var(--bento-cream-dark);
+  font-weight: 800;
 }
 
 .iconAvatar {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 6px;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 800;
 }
 
 /* Widget Grid View */
@@ -83,22 +85,22 @@
 }
 
 .widgetCard {
-  background: rgba(22, 23, 34, 0.95);
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 1.25rem;
+  background: var(--bento-slate);
+  border: 1.5px solid var(--border);
+  border-radius: var(--bento-radius);
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.1rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  transition: transform 0.22s ease, border-color 0.22s ease;
 }
 
 .widgetCard:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-3px);
+  border-color: var(--border-light);
 }
 
 .widgetCardHeader {
@@ -110,19 +112,19 @@
 .habitTitleBlock {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
 .colorBadge {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  box-shadow: 0 0 10px currentColor;
+  box-shadow: 0 0 12px currentColor;
 }
 
 .habitTitle {
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 1.05rem;
   color: #fff;
 }
 
@@ -130,28 +132,30 @@
   font-size: 0.72rem;
   color: var(--text-faint);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
+  font-weight: 700;
 }
 
 .checkBtn {
-  width: 2.2rem;
-  height: 2.2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   border: 2px solid var(--border-light);
-  background: var(--bg-alt);
+  background: rgba(0, 0, 0, 0.3);
   color: var(--text-dim);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1rem;
+  font-weight: 800;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .checkBtnCompleted {
   border-color: transparent;
   color: #fff;
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 /* Heatmap Grid */
@@ -164,59 +168,60 @@
 .heatmapGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
+  gap: 6px;
 }
 
 .heatmapCell {
   aspect-ratio: 1;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.2s ease;
   cursor: pointer;
   position: relative;
 }
 
 .heatmapCell:hover {
-  transform: scale(1.15);
+  transform: scale(1.18);
   z-index: 2;
 }
 
-.cellCoral { background: #FF4757; box-shadow: 0 0 8px rgba(255, 71, 87, 0.6); }
-.cellViolet { background: #8A2BE2; box-shadow: 0 0 8px rgba(138, 43, 226, 0.6); }
-.cellCyber { background: #3B82F6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.6); }
-.cellEmerald { background: #10B981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
-.cellAmber { background: #FFC048; box-shadow: 0 0 8px rgba(255, 192, 72, 0.6); }
-.cellCyan { background: #00D2D3; box-shadow: 0 0 8px rgba(0, 210, 211, 0.6); }
+.cellCoral { background: #FF4757; box-shadow: 0 0 10px rgba(255, 71, 87, 0.7); }
+.cellViolet { background: #8A2BE2; box-shadow: 0 0 10px rgba(138, 43, 226, 0.7); }
+.cellCyber { background: #3B82F6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.7); }
+.cellEmerald { background: #10B981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.7); }
+.cellAmber { background: #FFC048; box-shadow: 0 0 10px rgba(255, 192, 72, 0.7); }
+.cellCyan { background: #00D2D3; box-shadow: 0 0 10px rgba(0, 210, 211, 0.7); }
 
 .widgetFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--text-dim);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.75rem;
 }
 
 .streakBadge {
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--gold);
 }
 
 /* Journal Grid View */
 .journalWrap {
-  background: var(--bg-panel);
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  padding: 1.5rem;
+  background: var(--panel);
+  border-radius: var(--bento-radius);
+  border: 1.5px solid var(--border);
+  padding: 1.75rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   overflow-x: auto;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
 }
 
 .journalHeader {
@@ -228,128 +233,128 @@
 .journalGridTable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
 }
 
 .journalGridTable th, .journalGridTable td {
-  padding: 0.5rem 0.35rem;
+  padding: 0.6rem 0.4rem;
   text-align: center;
-  border: 1px solid var(--border-light);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .journalGridTable th {
-  background: var(--bg-alt);
+  background: rgba(0, 0, 0, 0.3);
   color: var(--text-dim);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .habitRowHeader {
   text-align: left !important;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
-  min-width: 160px;
-  padding-left: 0.75rem !important;
+  min-width: 170px;
+  padding-left: 0.85rem !important;
 }
 
 .gridDot {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   margin: 0 auto;
-  border: 1.5px solid var(--border-light);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
 }
 
 .gridDotFilled {
   border-color: transparent;
-  transform: scale(1.1);
+  transform: scale(1.12);
 }
 
 /* 75 Hard Retro Card */
 .hardCard {
-  background: #25201A;
-  border: 2px solid #3E342B;
-  border-radius: 20px;
-  padding: 2rem;
-  color: #E6D2BC;
+  background: #231C16;
+  border: 2px solid #423428;
+  border-radius: var(--bento-radius);
+  padding: 2.25rem;
+  color: #E8D4C1;
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 2rem;
   position: relative;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
 }
 
 .hardHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 2px dashed #4E4237;
-  padding-bottom: 1.25rem;
+  border-bottom: 2px dashed #544436;
+  padding-bottom: 1.5rem;
 }
 
 .hardTitle {
   font-family: var(--font-display);
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 900;
   letter-spacing: -0.02em;
-  color: #F4E8D1;
+  color: #F6EBD9;
   text-transform: uppercase;
 }
 
 .hardSubtitle {
-  font-size: 0.85rem;
-  color: #B89F82;
+  font-size: 0.88rem;
+  color: #BEA488;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .hardBadgeBlock {
-  background: #1A1612;
-  border: 1.5px solid #4E4237;
-  padding: 0.6rem 1.2rem;
-  border-radius: 10px;
+  background: #18130F;
+  border: 1.5px solid #544436;
+  padding: 0.75rem 1.5rem;
+  border-radius: 14px;
   text-align: center;
 }
 
 .hardDayNumber {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: #F59E0B;
 }
 
 .hardSectionTitle {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #B89F82;
-  margin-bottom: 0.75rem;
+  color: #BEA488;
+  margin-bottom: 0.85rem;
 }
 
 .hardBlocksGrid {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 .hardBlockRow {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
 .hardBlockLabel {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #A38B70;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #AA9075;
 }
 
 .hardDaysContainer {
   display: grid;
   grid-template-columns: repeat(25, 1fr);
-  gap: 4px;
+  gap: 5px;
 }
 
 @media (max-width: 768px) {
@@ -360,22 +365,22 @@
 
 .hardDaySquare {
   aspect-ratio: 1;
-  border-radius: 3px;
-  background: #191512;
-  border: 1px solid #3E342B;
+  border-radius: 4px;
+  background: #191410;
+  border: 1px solid #423428;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #6E5C4A;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #72604F;
 }
 
 .hardDaySquareDone {
   background: #D97706;
-  color: #191512;
+  color: #191410;
   border-color: #F59E0B;
-  box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
 }
 
 .hardDaySquareCurrent {
@@ -385,18 +390,18 @@
 
 .rulesChecklist {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
 }
 
 .ruleItem {
-  background: #1C1814;
-  border: 1.5px solid #3E342B;
-  padding: 0.85rem 1rem;
-  border-radius: 12px;
+  background: #1B1612;
+  border: 1.5px solid #423428;
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -406,41 +411,41 @@
 }
 
 .ruleItemChecked {
-  background: #2D2215;
+  background: #2D2115;
   border-color: #F59E0B;
 }
 
 .ruleCheckbox {
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 4px;
-  border: 2px solid #6E5C4A;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  border: 2px solid #72604F;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 800;
+  font-size: 0.8rem;
+  font-weight: 900;
   color: #F59E0B;
 }
 
 .ruleCheckboxChecked {
   border-color: #F59E0B;
   background: #F59E0B;
-  color: #1C1814;
+  color: #1B1612;
 }
 
 .ruleText {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: #E6D2BC;
+  color: #E8D4C1;
 }
 
 /* Fail Modal */
 .failModalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -449,21 +454,21 @@
 }
 
 .failModalCard {
-  background: #1C1814;
+  background: #1C1514;
   border: 2px solid #EF4444;
-  border-radius: 20px;
-  padding: 2rem;
-  max-width: 440px;
+  border-radius: 28px;
+  padding: 2.25rem;
+  max-width: 460px;
   width: 100%;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  box-shadow: 0 20px 50px rgba(239, 68, 68, 0.2);
+  gap: 1.5rem;
+  box-shadow: 0 24px 60px rgba(239, 68, 68, 0.25);
 }
 
 .failTitle {
-  font-size: 1.75rem;
+  font-size: 1.85rem;
   font-weight: 900;
   color: #EF4444;
   text-transform: uppercase;
@@ -472,6 +477,6 @@
 
 .failBody {
   color: #D1D5DB;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  font-size: 0.92rem;
+  line-height: 1.6;
 }
