@@ -1,27 +1,37 @@
 :root {
-  --bg: #0f1115;
-  --bg-alt: #14161c;
-  --panel: #171a21;
-  --panel-alt: #1d212b;
-  --border: #2a2e38;
-  --border-light: #3a3f4c;
+  --bg: #0d0e12;
+  --bg-alt: #13151c;
+  --panel: #161720;
+  --panel-alt: #1e202d;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.14);
 
-  --text: #f4f4f5;
-  --text-dim: #9a9fae;
-  --text-faint: #5b5f6b;
+  /* Bento Block Accents */
+  --bento-forest: #1C2D22;
+  --bento-forest-light: #253C2D;
+  --bento-crimson: #8C2626;
+  --bento-crimson-light: #A33030;
+  --bento-slate: #161720;
+  --bento-cream: #F5EFE6;
+  --bento-cream-dark: #E6DFD3;
 
-  --gold: #f5b700;
-  --gold-ink: #1a1400;
-  --emerald: #2ed573;
-  --emerald-ink: #06210f;
-  --coral: #ff5d5d;
-  --coral-ink: #2b0d0d;
-  --violet: #8c7ae6;
-  --violet-ink: #17123a;
-  --blue: #4fa3f7;
+  --text: #F5EFE6;
+  --text-dim: #A6ACBC;
+  --text-faint: #636A7B;
 
-  --cut: 14px;
-  --cut-sm: 9px;
+  --gold: #F5B700;
+  --gold-ink: #1A1400;
+  --emerald: #10B981;
+  --emerald-ink: #04291D;
+  --coral: #FF4757;
+  --coral-ink: #2E0B0E;
+  --violet: #8A2BE2;
+  --violet-ink: #1A082E;
+  --blue: #3B82F6;
+
+  --bento-radius: 28px;
+  --bento-radius-sm: 18px;
+  --pill-radius: 9999px;
 
   --font-display: var(--font-space-grotesk), "Segoe UI", sans-serif;
   --font-body: var(--font-inter), "Segoe UI", sans-serif;
@@ -43,8 +53,8 @@ body {
   min-height: 100%;
   color: var(--text);
   background: var(--bg);
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0);
-  background-size: 22px 22px;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.03) 1px, transparent 0);
+  background-size: 24px 24px;
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -67,7 +77,7 @@ h3,
 h4 {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   line-height: 1.15;
 }
 
@@ -80,20 +90,20 @@ select {
 }
 
 ::selection {
-  background: var(--gold);
-  color: var(--gold-ink);
+  background: var(--bento-cream);
+  color: #12131A;
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-light);
-  border: 2px solid var(--bg);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--pill-radius);
 }
 
 .visually-hidden {

@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from "react";
 import styles from "./Panel.module.css";
 
-type Accent = "gold" | "emerald" | "coral" | "violet" | undefined;
+type Accent = "gold" | "emerald" | "coral" | "violet" | "forest" | "crimson" | "cream" | undefined;
 
 interface PanelProps extends HTMLAttributes<HTMLDivElement> {
   accent?: Accent;
@@ -13,10 +13,13 @@ const ACCENT_CLASS: Record<string, string> = {
   emerald: styles.accentEmerald,
   coral: styles.accentCoral,
   violet: styles.accentViolet,
+  forest: styles.accentForest,
+  crimson: styles.accentCrimson,
+  cream: styles.accentCream,
 };
 
 export function Panel({ accent, small, className, children, ...rest }: PanelProps) {
-  const frameClass = [styles.frame, accent ? ACCENT_CLASS[accent] : "", small ? styles.small : ""]
+  const frameClass = [styles.bentoCard, accent ? ACCENT_CLASS[accent] : "", small ? styles.small : ""]
     .filter(Boolean)
     .join(" ");
 

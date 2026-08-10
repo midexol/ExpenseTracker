@@ -111,27 +111,40 @@ export default function DashboardPage() {
         <p>Level {me?.level ?? 1} adventurer · {me?.currentStreak ?? 0} day streak</p>
       </div>
 
-      <div className={styles.grid}>
-        <div className={styles.col}>
-          <Panel accent="violet">
-            <h3>Today&apos;s Quests</h3>
+      <div className={styles.bentoGrid}>
+        {/* Bento Card 1: Today's Quests (Warm Crimson Accent) */}
+        <div className={styles.bentoQuests}>
+          <Panel accent="crimson">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3>Today&apos;s Quests</h3>
+              <span style={{ fontSize: "0.78rem", background: "rgba(0,0,0,0.3)", padding: "0.2rem 0.6rem", borderRadius: "9999px" }}>
+                {dueTodos.length} Due
+              </span>
+            </div>
+
             {dueTodos.length === 0 && loggedToday ? (
-              <div className={styles.emptyQuests}>All caught up. Add a new quest below.</div>
+              <div className={styles.emptyQuests}>All caught up for today! Add a new quest below.</div>
             ) : (
-              <div style={{ marginTop: "0.5rem" }}>
+              <div style={{ marginTop: "0.75rem" }}>
                 <div className={styles.questItem}>
-                  <span className={`${styles.questCheck} ${styles.questCheckStatic} ${loggedToday ? styles.questDone : ""}`}>
+                  <button
+                    className={`${styles.questCheck} ${loggedToday ? styles.questDone : ""}`}
+                    disabled={loggedToday}
+                    onClick={() => router.push("/expenses")}
+                    aria-label="Log spending"
+                  >
                     {loggedToday ? "✓" : ""}
-                  </span>
+                  </button>
                   <span className={`${styles.questTitle} ${loggedToday ? styles.questDone : ""}`}>
                     Log today&apos;s spending
                   </span>
                   {!loggedToday ? (
-                    <Button size="sm" variant="emerald" onClick={() => router.push("/expenses")}>
-                      Log
+                    <Button size="sm" variant="primary" onClick={() => router.push("/expenses")}>
+                      Log ↗
                     </Button>
                   ) : null}
                 </div>
+
                 {dueTodos.map((t) => (
                   <div className={styles.questItem} key={t.id}>
                     <button className={styles.questCheck} onClick={() => toggleTodo(t)} aria-label="Complete" />
@@ -139,7 +152,9 @@ export default function DashboardPage() {
                       {t.title}
                       {t.recurrence === "DAILY" ? " (Daily)" : t.recurrence === "WEEKLY" ? " (Weekly)" : ""}
                     </span>
-                    <span style={{ fontSize: "0.72rem", color: "var(--gold)" }}>+{t.xpValue} XP</span>
+                    <span style={{ fontSize: "0.78rem", fontWeight: 800, color: "var(--bento-cream)" }}>
+                      +{t.xpValue} XP
+                    </span>
                   </div>
                 ))}
               </div>
@@ -152,54 +167,61 @@ export default function DashboardPage() {
                 value={quickTodo}
                 onChange={(e) => setQuickTodo(e.target.value)}
               />
-              <Button type="submit" variant="violet" size="sm">
-                Add
+              <Button type="submit" variant="primary" size="sm">
+                Add ↗
               </Button>
             </form>
           </Panel>
+        </div>
 
-          <Panel accent="emerald">
-            <h3>Quick Log an Expense</h3>
-            <form className={styles.quickForm} onSubmit={handleQuickExpense}>
+        {/* Bento Card 2: Quick Log Expense (Deep Forest Accent) */}
+        <div className={styles.bentoExpense}>
+          <Panel accent="forest">
+            <h3>Quick Expense Logger</h3>
+            <form className={styles.quickForm} onSubmit={handleQuickExpense} style={{ flexDirection: "column" }}>
               <input
                 className={styles.quickNameInput}
                 placeholder="What did you spend on?"
                 value={quickExpense.name}
                 onChange={(e) => setQuickExpense((f) => ({ ...f, name: e.target.value }))}
               />
-              <select
-                value={quickExpense.category}
-                onChange={(e) => setQuickExpense((f) => ({ ...f, category: e.target.value }))}
-              >
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-              <input
-                className={styles.quickAmountInput}
-                type="number"
-                min="0.01"
-                step="0.01"
-                placeholder="Amount"
-                value={quickExpense.amount}
-                onChange={(e) => setQuickExpense((f) => ({ ...f, amount: e.target.value }))}
-              />
-              <Button type="submit" variant="emerald" size="sm">
-                Log
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <select
+                  value={quickExpense.category}
+                  onChange={(e) => setQuickExpense((f) => ({ ...f, category: e.target.value }))}
+                  style={{ flex: 1 }}
+                >
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  className={styles.quickAmountInput}
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="Amount"
+                  value={quickExpense.amount}
+                  onChange={(e) => setQuickExpense((f) => ({ ...f, amount: e.target.value }))}
+                />
+              </div>
+              <Button type="submit" variant="emerald" size="sm" style={{ alignSelf: "flex-end" }}>
+                Log Expense ↗
               </Button>
             </form>
           </Panel>
         </div>
 
-        <div className={styles.col}>
-          <Panel accent="gold">
+        {/* Bento Card 3: Spend by Category (Slate Obsidian Accent) */}
+        <div className={styles.bentoCategory}>
+          <Panel>
             <h3>Spend by category · {budget?.period ?? "Monthly"}</h3>
             {categoryBreakdown.length === 0 ? (
               <div className={styles.emptyQuests}>Nothing logged this period yet.</div>
             ) : (
-              <div style={{ marginTop: "0.5rem" }}>
+              <div style={{ marginTop: "0.75rem" }}>
                 {categoryBreakdown.map((row) => (
                   <div className={styles.chartRow} key={row.category}>
                     <span className={styles.chartLabel}>{row.category}</span>
@@ -215,13 +237,18 @@ export default function DashboardPage() {
               </div>
             )}
           </Panel>
+        </div>
 
-          <Panel>
+        {/* Bento Card 4: Recent Achievements (Warm Cream Accent) */}
+        <div className={styles.bentoAchievements}>
+          <Panel accent="cream">
             <h3>Recent Achievements</h3>
             {recentAchievements.length === 0 ? (
-              <div className={styles.emptyQuests}>None yet — complete a quest or log an expense to start.</div>
+              <div className={styles.emptyQuests} style={{ color: "rgba(18,19,26,0.6)" }}>
+                None yet — complete a quest or log an expense to start.
+              </div>
             ) : (
-              <div style={{ marginTop: "0.5rem" }}>
+              <div style={{ marginTop: "0.75rem" }}>
                 {recentAchievements.map((a) => {
                   const Icon = ACHIEVEMENT_ICONS[a.icon as AchievementIconKey] ?? ACHIEVEMENT_ICONS.trophy;
                   return (
@@ -240,8 +267,8 @@ export default function DashboardPage() {
                 })}
               </div>
             )}
-            <Button variant="ghost" size="sm" style={{ marginTop: "0.85rem" }} onClick={() => router.push("/achievements")}>
-              View all
+            <Button variant="ghost" size="sm" style={{ marginTop: "1rem", color: "#12131A", borderColor: "rgba(18,19,26,0.2)" }} onClick={() => router.push("/achievements")}>
+              View all ↗
             </Button>
           </Panel>
         </div>

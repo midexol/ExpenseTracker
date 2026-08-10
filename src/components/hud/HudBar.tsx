@@ -29,49 +29,51 @@ export function HudBar() {
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.top}>
-        <span className={styles.logo}>
-          Quest<span>Log</span>
-        </span>
-
-        <span className={styles.levelBadge}>
-          <StarIcon width={13} height={13} />
-          LV {me?.level ?? 1}
-        </span>
-
-        <div className={styles.xpBlock}>
-          <span className={styles.xpLabel}>
-            {me ? `${me.xpIntoLevel} / ${me.xpForNextLevel} XP` : "XP"}
+      <div className={styles.innerWrap}>
+        <div className={styles.top}>
+          <span className={styles.logo}>
+            Quest<span>Log</span>
           </span>
-          <ProgressBar pct={me?.progressPct ?? 0} color="gold" segments={12} />
+
+          <span className={styles.levelBadge}>
+            <StarIcon width={13} height={13} />
+            LV {me?.level ?? 1}
+          </span>
+
+          <div className={styles.xpBlock}>
+            <span className={styles.xpLabel}>
+              {me ? `${me.xpIntoLevel} / ${me.xpForNextLevel} XP` : "XP"}
+            </span>
+            <ProgressBar pct={me?.progressPct ?? 0} color="gold" segments={12} />
+          </div>
+
+          <span className={`${styles.stat} ${styles.statCoin}`}>
+            <CoinIcon className={styles.statIcon} />
+            {me?.coins ?? 0}
+          </span>
+
+          <span className={`${styles.stat} ${styles.statStreak}`}>
+            <FlameIcon className={styles.statIcon} />
+            {me?.currentStreak ?? 0}
+          </span>
+
+          <button className={styles.logoutBtn} onClick={handleLogout}>
+            Log out
+          </button>
         </div>
 
-        <span className={`${styles.stat} ${styles.statCoin}`}>
-          <CoinIcon className={styles.statIcon} />
-          {me?.coins ?? 0}
-        </span>
-
-        <span className={`${styles.stat} ${styles.statStreak}`}>
-          <FlameIcon className={styles.statIcon} />
-          {me?.currentStreak ?? 0}
-        </span>
-
-        <button className={styles.logoutBtn} onClick={handleLogout}>
-          Log out
-        </button>
+        <nav className={styles.nav}>
+          {LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`${styles.navLink} ${pathname === link.href ? styles.navLinkActive : ""}`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
       </div>
-
-      <nav className={styles.nav}>
-        {LINKS.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`${styles.navLink} ${pathname === link.href ? styles.navLinkActive : ""}`}
-          >
-            {link.label}
-          </Link>
-        ))}
-      </nav>
     </div>
   );
 }

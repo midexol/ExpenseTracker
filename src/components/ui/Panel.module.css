@@ -1,50 +1,62 @@
-.frame {
-  --c: var(--cut);
-  position: relative;
-  background: var(--border);
-  clip-path: polygon(
-    var(--c) 0,
-    100% 0,
-    100% calc(100% - var(--c)),
-    calc(100% - var(--c)) 100%,
-    0 100%,
-    0 var(--c)
-  );
-  padding: 2px;
-}
-
-.frame.accentGold {
-  background: var(--gold);
-}
-.frame.accentEmerald {
-  background: var(--emerald);
-}
-.frame.accentCoral {
-  background: var(--coral);
-}
-.frame.accentViolet {
-  background: var(--violet);
-}
-
-.inner {
-  --c: var(--cut);
+.bentoCard {
   background: var(--panel);
-  clip-path: polygon(
-    var(--c) 0,
-    100% 0,
-    100% calc(100% - var(--c)),
-    calc(100% - var(--c)) 100%,
-    0 100%,
-    0 var(--c)
-  );
-  padding: 1.25rem;
-  height: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: var(--bento-radius);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bentoCard:hover {
+  border-color: var(--border-light);
 }
 
 .small {
-  --c: var(--cut-sm);
+  border-radius: var(--bento-radius-sm);
+  padding: 1rem;
 }
 
-.small > .inner {
-  padding: 0.85rem;
+/* Color Block Accents */
+.accentForest {
+  background: var(--bento-forest);
+  border-color: rgba(35, 60, 45, 0.8);
+  color: #F5EFE6;
+}
+
+.accentCrimson {
+  background: var(--bento-crimson);
+  border-color: rgba(163, 48, 48, 0.8);
+  color: #F5EFE6;
+}
+
+.accentGold {
+  background: #1F1B0F;
+  border-color: rgba(245, 183, 0, 0.3);
+}
+
+.accentEmerald {
+  background: #112219;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.accentCoral {
+  background: #271416;
+  border-color: rgba(255, 71, 87, 0.3);
+}
+
+.accentViolet {
+  background: #1E132B;
+  border-color: rgba(138, 43, 226, 0.3);
+}
+
+.accentCream {
+  background: var(--bento-cream);
+  border-color: var(--bento-cream-dark);
+  color: #12131A;
+}
+
+.inner {
+  height: 100%;
 }

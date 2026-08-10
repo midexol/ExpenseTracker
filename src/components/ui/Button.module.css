@@ -1,25 +1,24 @@
 .btn {
-  --c: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   letter-spacing: 0.02em;
-  text-transform: uppercase;
-  padding: 0.7rem 1.2rem;
-  border: 2px solid transparent;
+  padding: 0.65rem 1.35rem;
+  border-radius: var(--pill-radius);
+  border: 1.5px solid transparent;
   cursor: pointer;
-  clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
-  transition: transform 0.08s ease, filter 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--panel-alt);
   color: var(--text);
+  min-height: 42px;
 }
 
 .btn:active {
-  transform: translateY(1px);
+  transform: scale(0.97);
 }
 
 .btn:disabled {
@@ -28,27 +27,33 @@
 }
 
 .primary {
-  background: var(--gold);
-  color: var(--gold-ink);
+  background: var(--bento-cream);
+  color: #12131A;
+  box-shadow: 0 4px 14px rgba(245, 239, 230, 0.2);
 }
 .primary:hover:not(:disabled) {
-  filter: brightness(1.08);
+  background: #FFFFFF;
+  transform: translateY(-1px);
 }
 
 .emerald {
   background: var(--emerald);
-  color: var(--emerald-ink);
+  color: #04291D;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
 }
 .emerald:hover:not(:disabled) {
-  filter: brightness(1.08);
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 .violet {
   background: var(--violet);
-  color: var(--violet-ink);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(138, 43, 226, 0.3);
 }
 .violet:hover:not(:disabled) {
   filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 .ghost {
@@ -57,22 +62,25 @@
   color: var(--text-dim);
 }
 .ghost:hover:not(:disabled) {
-  border-color: var(--text-dim);
+  border-color: var(--text);
   color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .danger {
-  background: transparent;
-  border-color: var(--coral);
-  color: var(--coral);
+  background: var(--coral);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(255, 71, 87, 0.3);
 }
 .danger:hover:not(:disabled) {
-  background: var(--coral-ink);
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 .sm {
-  padding: 0.45rem 0.8rem;
-  font-size: 0.75rem;
+  padding: 0.4rem 0.95rem;
+  font-size: 0.78rem;
+  min-height: 36px;
 }
 
 .full {
