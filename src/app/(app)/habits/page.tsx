@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Panel } from "@/components/ui/Panel";
 import { Field, Input, Select } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { useAppData } from "@/lib/AppDataContext";
 import { apiRequest, clientTimezoneOffset } from "@/lib/apiClient";
 import { todayLocalString } from "@/lib/constants";
@@ -37,59 +36,24 @@ interface DailyMetric {
   energy: number | null;
 }
 
-interface Challenge75 {
-  id: string;
-  status: "NOT_STARTED" | "ACTIVE" | "COMPLETED" | "FAILED";
-  startDate: string | null;
-  currentDay: number;
-  attemptCount: number;
-  failedDate: string | null;
-}
-
-interface Challenge75Log {
-  id: string;
-  date: string;
-  dayNumber: number;
-  attemptNumber: number;
-  diet: boolean;
-  water: boolean;
-  workouts: boolean;
-  reading: boolean;
-  photo: boolean;
-  allCompleted: boolean;
-}
-
 const COLOR_HEX: Record<string, string> = {
-  coral: "#FF4757",
-  violet: "#8A2BE2",
-  cyber: "#3B82F6",
-  emerald: "#10B981",
-  amber: "#FFC048",
-  cyan: "#00D2D3",
+  coral: "#FF5D5D",
+  violet: "#9B82F6",
+  cyber: "#18ADF2",
+  emerald: "#18ADF2",
+  amber: "#8ECAE6",
+  cyan: "#136286",
 };
-
-const RULES = [
-  { id: "diet", label: "Follow Diet (No cheat meals, no alcohol)" },
-  { id: "water", label: "Drink 1 Gallon of Water" },
-  { id: "workouts", label: "2x 45-min Workouts (1 outdoor)" },
-  { id: "reading", label: "Read 10 Pages of Non-Fiction" },
-  { id: "photo", label: "Progress Check-in & Photo" },
-] as const;
 
 export default function HabitsPage() {
   const { refresh, notifyUnlocks } = useAppData();
-  const [activeTab, setActiveTab] = useState<"widgets" | "journal" | "75hard">("widgets");
+  const [activeTab, setActiveTab] = useState<"widgets" | "journal">("widgets");
 
   // Habits Data
   const [habits, setHabits] = useState<Habit[]>([]);
   const [habitLogs, setHabitLogs] = useState<HabitLog[]>([]);
   const [dailyMetrics, setDailyMetrics] = useState<DailyMetric[]>([]);
   const [loadingHabits, setLoadingHabits] = useState(true);
-
-  // 75 Hard Data
-  const [challenge, setChallenge] = useState<Challenge75 | null>(null);
-  const [challengeLogs, setChallengeLogs] = useState<Challenge75Log[]>([]);
-  const [loadingChallenge, setLoadingChallenge] = useState(true);
 
   // Forms
   const [newHabit, setNewHabit] = useState({ title: "", category: "General", color: "coral" as Habit["color"] });
@@ -108,19 +72,8 @@ export default function HabitsPage() {
     setLoadingHabits(false);
   }
 
-  // Load 75 Hard Data
-  async function loadChallengeData() {
-    setLoadingChallenge(true);
-    const tz = clientTimezoneOffset();
-    const data = await apiRequest<{ challenge: Challenge75 | null; logs: Challenge75Log[] }>(`/api/challenge75?tzOffset=${tz}`);
-    setChallenge(data.challenge);
-    setChallengeLogs(data.logs);
-    setLoadingChallenge(false);
-  }
-
   useEffect(() => {
     loadHabitsData();
-    loadChallengeData();
   }, []);
 
   // Days array for past 28 days (Widget Heatmap)
@@ -199,36 +152,12 @@ export default function HabitsPage() {
     await loadHabitsData();
   }
 
-  // Start or Restart 75 Hard
-  async function handleChallengeAction(action: "START" | "RESTART") {
-    await apiRequest("/api/challenge75", {
-      method: "POST",
-      body: JSON.stringify({ action, timezoneOffset: clientTimezoneOffset() }),
-    });
-    await loadChallengeData();
-  }
-
-  // Toggle 75 Hard rule check for today
-  async function handleToggleRule(rule: (typeof RULES)[number]["id"]) {
-    const result = await apiRequest<GamificationResult>("/api/challenge75/log", {
-      method: "POST",
-      body: JSON.stringify({ date: today, rule, timezoneOffset: clientTimezoneOffset() }),
-    });
-    notifyUnlocks(result.newlyUnlocked);
-    await Promise.all([loadChallengeData(), refresh()]);
-  }
-
-  const todayChallengeLog = useMemo(
-    () => challengeLogs.find((l) => l.date === today),
-    [challengeLogs, today]
-  );
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.headerTitle}>
-          <h1>Habits & 75 Hard Hub</h1>
-          <p>Track daily consistency, extended journal metrics, and the 75 Hard challenge</p>
+          <h1>Habit Rituals Center</h1>
+          <p>Forging discipline through daily repetition. Track consistency & extended journal metrics.</p>
         </div>
 
         <div className={styles.tabNav}>
@@ -236,9 +165,6 @@ export default function HabitsPage() {
             className={`${styles.tabBtn} ${activeTab === "widgets" ? styles.tabBtnActive : ""}`}
             onClick={() => setActiveTab("widgets")}
           >
-            <span className={styles.iconAvatar} style={{ background: "rgba(138, 43, 226, 0.2)", color: "#8A2BE2" }}>
-              HT
-            </span>
             Widget Dashboard
           </button>
 
@@ -246,20 +172,7 @@ export default function HabitsPage() {
             className={`${styles.tabBtn} ${activeTab === "journal" ? styles.tabBtnActive : ""}`}
             onClick={() => setActiveTab("journal")}
           >
-            <span className={styles.iconAvatar} style={{ background: "rgba(59, 130, 246, 0.2)", color: "#3B82F6" }}>
-              JN
-            </span>
             Extended Journal Grid
-          </button>
-
-          <button
-            className={`${styles.tabBtn} ${activeTab === "75hard" ? styles.tabBtnActive : ""}`}
-            onClick={() => setActiveTab("75hard")}
-          >
-            <span className={styles.iconAvatar} style={{ background: "rgba(245, 158, 11, 0.2)", color: "#F59E0B" }}>
-              75
-            </span>
-            75 Hard Challenge
           </button>
         </div>
       </div>
@@ -272,7 +185,7 @@ export default function HabitsPage() {
               {habits.length} Active Habits · Past 28 Days Heatmap
             </span>
             <Button variant="violet" size="sm" onClick={() => setShowAddForm(!showAddForm)}>
-              {showAddForm ? "Cancel" : "Add Habit"}
+              {showAddForm ? "Cancel" : "+ Add Habit"}
             </Button>
           </div>
 
@@ -299,24 +212,24 @@ export default function HabitsPage() {
                   />
                 </Field>
 
-                <Field label="Glow Color" htmlFor="habit-color">
+                <Field label="Color Theme" htmlFor="habit-color">
                   <Select
                     id="habit-color"
                     value={newHabit.color}
                     onChange={(e) => setNewHabit((h) => ({ ...h, color: e.target.value as Habit["color"] }))}
                   >
                     <option value="coral">Coral Red</option>
-                    <option value="violet">Electric Violet</option>
+                    <option value="violet">Violet Blue</option>
                     <option value="cyber">Cyber Blue</option>
-                    <option value="emerald">Emerald Green</option>
-                    <option value="amber">Golden Amber</option>
-                    <option value="cyan">Neon Cyan</option>
+                    <option value="emerald">Ocean Blue</option>
+                    <option value="amber">Sky Blue</option>
+                    <option value="cyan">Deep Slate</option>
                   </Select>
                 </Field>
 
                 <div style={{ alignSelf: "flex-end" }}>
-                  <Button type="submit" variant="violet" size="sm">
-                    Create Widget
+                  <Button type="submit" variant="emerald" size="sm">
+                    Create Widget ↗
                   </Button>
                 </div>
               </form>
@@ -337,7 +250,7 @@ export default function HabitsPage() {
                   <div className={styles.widgetCard} key={habit.id}>
                     <div className={styles.widgetCardHeader}>
                       <div className={styles.habitTitleBlock}>
-                        <div className={styles.colorBadge} style={{ color: colorHex, background: colorHex }} />
+                        <div className={styles.colorBadge} style={{ background: colorHex }} />
                         <div>
                           <div className={styles.habitTitle}>{habit.title}</div>
                           <div className={styles.habitCategory}>{habit.category}</div>
@@ -346,7 +259,6 @@ export default function HabitsPage() {
 
                       <button
                         className={`${styles.checkBtn} ${isTodayDone ? styles.checkBtnCompleted : ""}`}
-                        style={isTodayDone ? { background: colorHex, boxShadow: `0 0 14px ${colorHex}` } : {}}
                         onClick={() => handleToggleHabit(habit.id, today)}
                         aria-label="Toggle today check-in"
                       >
@@ -435,7 +347,7 @@ export default function HabitsPage() {
 
               <div style={{ alignSelf: "flex-end" }}>
                 <Button type="submit" variant="emerald" size="sm">
-                  Log Metrics
+                  Log Metrics ↗
                 </Button>
               </div>
             </form>
@@ -481,7 +393,7 @@ export default function HabitsPage() {
                           <td key={date} style={{ padding: "0.2rem" }}>
                             <div
                               className={`${styles.gridDot} ${isDone ? styles.gridDotFilled : ""}`}
-                              style={isDone ? { background: colorHex, boxShadow: `0 0 6px ${colorHex}` } : {}}
+                              style={isDone ? { background: colorHex } : {}}
                               onClick={() => handleToggleHabit(habit.id, date)}
                               title={`${habit.title} on ${date}: ${isDone ? "Done" : "Click to toggle"}`}
                             />
@@ -495,124 +407,6 @@ export default function HabitsPage() {
               </tbody>
             </table>
           </div>
-        </div>
-      )}
-
-      {/* --- TAB 3: 75 HARD CHALLENGE --- */}
-      {activeTab === "75hard" && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          {loadingChallenge ? (
-            <div style={{ color: "var(--text-faint)", padding: "2rem 0" }}>Loading 75 Hard status...</div>
-          ) : (
-            <div className={styles.hardCard}>
-              <div className={styles.hardHeader}>
-                <div>
-                  <div className={styles.hardTitle}>75 Hard</div>
-                  <div className={styles.hardSubtitle}>Tactical Discipline Challenge</div>
-                </div>
-
-                <div className={styles.hardBadgeBlock}>
-                  <div className={styles.hardSectionTitle} style={{ margin: 0 }}>Current Attempt</div>
-                  <div className={styles.hardDayNumber}>
-                    {challenge?.status === "ACTIVE" ? `DAY ${challenge.currentDay}` : challenge?.status ?? "NOT STARTED"}
-                  </div>
-                  <div style={{ fontSize: "0.72rem", color: "#A38B70", marginTop: "0.15rem" }}>
-                    Attempt #{challenge?.attemptCount ?? 1}
-                  </div>
-                </div>
-              </div>
-
-              {/* Status Controls */}
-              {(!challenge || challenge.status === "NOT_STARTED") && (
-                <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
-                  <p style={{ color: "#E6D2BC", marginBottom: "1.25rem" }}>
-                    Are you ready to lock in for 75 consecutive days of uncompromising discipline?
-                  </p>
-                  <Button variant="emerald" onClick={() => handleChallengeAction("START")}>
-                    Start 75 Hard Challenge
-                  </Button>
-                </div>
-              )}
-
-              {/* FAILED Modal Twist */}
-              {challenge?.status === "FAILED" && (
-                <div className={styles.failModalOverlay}>
-                  <div className={styles.failModalCard}>
-                    <div className={styles.failTitle}>CHALLENGE FAILED</div>
-                    <div className={styles.failBody}>
-                      You missed one or more required daily tasks on <strong>{challenge.failedDate ?? "yesterday"}</strong>.
-                      <br /><br />
-                      Per the 75 Hard rules: <em>Zero exceptions, zero cheat days.</em> Your streak has been reset to Day 1 for Attempt #{challenge.attemptCount + 1}.
-                    </div>
-                    <Button variant="danger" onClick={() => handleChallengeAction("RESTART")}>
-                      Accept Twist & Restart Day 1
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {challenge?.status === "ACTIVE" && (
-                <>
-                  {/* Today Checklist */}
-                  <div>
-                    <div className={styles.hardSectionTitle}>Today&apos;s Core Rules Checklist</div>
-                    <div className={styles.rulesChecklist}>
-                      {RULES.map((rule) => {
-                        const isChecked = Boolean(todayChallengeLog?.[rule.id]);
-                        return (
-                          <div
-                            key={rule.id}
-                            className={`${styles.ruleItem} ${isChecked ? styles.ruleItemChecked : ""}`}
-                            onClick={() => handleToggleRule(rule.id)}
-                          >
-                            <div className={`${styles.ruleCheckbox} ${isChecked ? styles.ruleCheckboxChecked : ""}`}>
-                              {isChecked ? "✓" : ""}
-                            </div>
-                            <span className={styles.ruleText}>{rule.label}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* 75-Day Grid divided into 3 blocks of 25 */}
-                  <div>
-                    <div className={styles.hardSectionTitle}>75-Day Master Progress Grid</div>
-                    <div className={styles.hardBlocksGrid}>
-                      {[
-                        { title: "DAYS 1 — 25", start: 1, end: 25 },
-                        { title: "DAYS 26 — 50", start: 26, end: 50 },
-                        { title: "DAYS 51 — 75", start: 51, end: 75 },
-                      ].map((block) => (
-                        <div className={styles.hardBlockRow} key={block.title}>
-                          <div className={styles.hardBlockLabel}>{block.title}</div>
-                          <div className={styles.hardDaysContainer}>
-                            {Array.from({ length: block.end - block.start + 1 }, (_, i) => {
-                              const dayNum = block.start + i;
-                              const isDone = challengeLogs.some((l) => l.dayNumber === dayNum && l.allCompleted);
-                              const isCurrent = challenge.currentDay === dayNum;
-
-                              return (
-                                <div
-                                  key={dayNum}
-                                  className={`${styles.hardDaySquare} ${isDone ? styles.hardDaySquareDone : ""} ${
-                                    isCurrent ? styles.hardDaySquareCurrent : ""
-                                  }`}
-                                  title={`Day ${dayNum}: ${isDone ? "Completed" : isCurrent ? "Active Today" : "Upcoming"}`}
-                                >
-                                  {dayNum}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
         </div>
       )}
     </div>
