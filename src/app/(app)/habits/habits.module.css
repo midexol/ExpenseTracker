@@ -187,9 +187,9 @@
 .cellCoral { background: #FF5D5D; border-color: #FF5D5D; }
 .cellViolet { background: #9B82F6; border-color: #9B82F6; }
 .cellCyber { background: #18ADF2; border-color: #18ADF2; }
-.cellEmerald { background: #10B981; border-color: #10B981; }
-.cellAmber { background: #F5B700; border-color: #F5B700; }
-.cellCyan { background: #00D2D3; border-color: #00D2D3; }
+.cellEmerald { background: #18ADF2; border-color: #18ADF2; }
+.cellAmber { background: #8ECAE6; border-color: #8ECAE6; }
+.cellCyan { background: #136286; border-color: #136286; }
 
 .widgetFooter {
   display: flex;

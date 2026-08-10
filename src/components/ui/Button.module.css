@@ -11,72 +11,83 @@
   border-radius: var(--pill-radius);
   border: 1.5px solid transparent;
   cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   background: var(--panel-alt);
-  color: var(--text);
+  color: #E0EBF0;
   min-height: 44px;
   box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
 }
 
 .btn:hover:not(:disabled) {
-  transform: translateY(-2px);
+  transform: none;
+  filter: none !important;
+  box-shadow: none !important;
 }
 
 .btn:active:not(:disabled) {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
+  color: #E0EBF0 !important;
 }
 
 .primary {
   background: var(--primary);
-  color: var(--primary-ink);
+  color: #061014 !important;
   box-shadow: none !important;
+  filter: none !important;
 }
 .primary:hover:not(:disabled) {
-  filter: brightness(1.1);
+  background: #A6DCF2;
 }
 
 .emerald {
-  background: var(--emerald);
-  color: #04291D;
+  background: var(--highlight);
+  color: #061014 !important;
   box-shadow: none !important;
+  filter: none !important;
 }
 .emerald:hover:not(:disabled) {
-  filter: brightness(1.1);
+  background: #50C2F7;
 }
 
 .violet {
-  background: var(--violet);
-  color: #FFFFFF;
+  background: #136286;
+  color: #E0EBF0 !important;
+  border-color: #1C7CA7;
   box-shadow: none !important;
+  filter: none !important;
 }
 .violet:hover:not(:disabled) {
-  filter: brightness(1.12);
+  background: #197BA8;
 }
 
 .ghost {
-  background: transparent;
-  border-color: var(--border-light);
-  color: var(--text-dim);
+  background: var(--panel-alt);
+  border-color: var(--border);
+  color: #E0EBF0 !important;
   box-shadow: none !important;
+  filter: none !important;
 }
 .ghost:hover:not(:disabled) {
-  border-color: var(--text);
-  color: var(--text);
-  background: rgba(142, 202, 230, 0.08);
+  border-color: var(--highlight);
+  color: #E0EBF0 !important;
+  background: rgba(142, 202, 230, 0.12);
 }
 
 .danger {
-  background: var(--coral);
-  color: #FFFFFF;
+  background: #FF4757;
+  color: #FFFFFF !important;
   box-shadow: none !important;
+  filter: none !important;
 }
 .danger:hover:not(:disabled) {
-  filter: brightness(1.12);
+  background: #FF6B7A;
 }
 
 .sm {

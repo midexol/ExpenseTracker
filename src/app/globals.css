@@ -16,9 +16,9 @@
   --highlight: #18ADF2;
 
   --gold: #8ECAE6;
-  --emerald: #10B981;
+  --emerald: #18ADF2;
   --coral: #FF5D5D;
-  --violet: #9B82F6;
+  --violet: #8ECAE6;
   --blue: #18ADF2;
 
   --card-radius: 20px;
@@ -47,10 +47,10 @@
   --highlight: #18ADF2;
 
   --gold: #136286;
-  --emerald: #059669;
+  --emerald: #18ADF2;
   --coral: #DC2626;
-  --violet: #7C3AED;
-  --blue: #0284C7;
+  --violet: #136286;
+  --blue: #18ADF2;
 
   color-scheme: light;
 }
