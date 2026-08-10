@@ -38,7 +38,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: none !important;
   }
 
   .mobileBottomNav {
@@ -157,7 +157,7 @@
   justify-content: center;
   gap: 0.4rem;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(142, 202, 230, 0.25);
+  box-shadow: none !important;
 }
 
 .newQuestBtn:hover {

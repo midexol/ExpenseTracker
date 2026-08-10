@@ -15,7 +15,7 @@
   background: var(--panel-alt);
   color: var(--text);
   min-height: 44px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: none !important;
 }
 
 .btn:hover:not(:disabled) {
@@ -32,54 +32,51 @@
 }
 
 .primary {
-  background: var(--bento-cream-solid);
-  color: #12131A;
-  box-shadow: 0 6px 18px rgba(246, 240, 231, 0.22);
+  background: var(--primary);
+  color: var(--primary-ink);
+  box-shadow: none !important;
 }
 .primary:hover:not(:disabled) {
-  background: #FFFFFF;
-  box-shadow: 0 8px 24px rgba(246, 240, 231, 0.35);
+  filter: brightness(1.1);
 }
 
 .emerald {
   background: var(--emerald);
   color: #04291D;
-  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28);
+  box-shadow: none !important;
 }
 .emerald:hover:not(:disabled) {
   filter: brightness(1.1);
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
 }
 
 .violet {
   background: var(--violet);
   color: #FFFFFF;
-  box-shadow: 0 6px 18px rgba(138, 43, 226, 0.32);
+  box-shadow: none !important;
 }
 .violet:hover:not(:disabled) {
   filter: brightness(1.12);
-  box-shadow: 0 8px 24px rgba(138, 43, 226, 0.45);
 }
 
 .ghost {
-  background: rgba(255, 255, 255, 0.04);
+  background: transparent;
   border-color: var(--border-light);
   color: var(--text-dim);
+  box-shadow: none !important;
 }
 .ghost:hover:not(:disabled) {
   border-color: var(--text);
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(142, 202, 230, 0.08);
 }
 
 .danger {
   background: var(--coral);
   color: #FFFFFF;
-  box-shadow: 0 6px 18px rgba(255, 71, 87, 0.32);
+  box-shadow: none !important;
 }
 .danger:hover:not(:disabled) {
   filter: brightness(1.12);
-  box-shadow: 0 8px 24px rgba(255, 71, 87, 0.45);
 }
 
 .sm {

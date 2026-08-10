@@ -1,4 +1,4 @@
-/* Dark Mode & Glassmorphism Theme for Habits & 75 Hard Hub */
+/* Clean Flat Theme for Habits & 75 Hard Hub (NO SHADOWS, NO NEON) */
 
 .container {
   display: flex;
@@ -16,7 +16,7 @@
 }
 
 .headerTitle h1 {
-  font-size: 2rem;
+  font-size: 1.85rem;
   font-weight: 800;
   color: var(--text);
   margin: 0;
@@ -50,19 +50,18 @@
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.22s ease;
+  transition: all 0.2s ease;
 }
 
 .tabBtn:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(142, 202, 230, 0.08);
 }
 
 .tabBtnActive {
-  background: var(--bento-cream-solid);
-  color: #12131A;
-  box-shadow: 0 4px 14px rgba(246, 240, 231, 0.25);
-  border-color: var(--bento-cream-dark);
+  background: var(--primary);
+  color: var(--primary-ink);
+  box-shadow: none !important;
   font-weight: 800;
 }
 
@@ -85,22 +84,21 @@
 }
 
 .widgetCard {
-  background: var(--bento-slate);
-  border: 1.5px solid var(--border);
-  border-radius: var(--bento-radius);
+  background: var(--panel);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--card-radius);
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-  transition: transform 0.22s ease, border-color 0.22s ease;
+  box-shadow: none !important;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .widgetCard:hover {
-  transform: translateY(-3px);
-  border-color: var(--border-light);
+  border-color: var(--highlight);
 }
 
 .widgetCardHeader {
@@ -119,18 +117,18 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  box-shadow: 0 0 12px currentColor;
+  background: var(--highlight);
 }
 
 .habitTitle {
   font-weight: 800;
   font-size: 1.05rem;
-  color: #fff;
+  color: var(--text);
 }
 
 .habitCategory {
   font-size: 0.72rem;
-  color: var(--text-faint);
+  color: var(--text-dim);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-weight: 700;
@@ -141,7 +139,7 @@
   height: 2.5rem;
   border-radius: 50%;
   border: 2px solid var(--border-light);
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--bg-alt);
   color: var(--text-dim);
   cursor: pointer;
   display: flex;
@@ -149,13 +147,13 @@
   justify-content: center;
   font-size: 1rem;
   font-weight: 800;
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
 }
 
 .checkBtnCompleted {
-  border-color: transparent;
+  border-color: var(--emerald);
+  background: var(--emerald);
   color: #fff;
-  transform: scale(1.08);
 }
 
 /* Heatmap Grid */
@@ -174,24 +172,24 @@
 .heatmapCell {
   aspect-ratio: 1;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(142, 202, 230, 0.06);
+  border: 1px solid rgba(142, 202, 230, 0.12);
   transition: all 0.2s ease;
   cursor: pointer;
   position: relative;
 }
 
 .heatmapCell:hover {
-  transform: scale(1.18);
+  transform: scale(1.1);
   z-index: 2;
 }
 
-.cellCoral { background: #FF4757; box-shadow: 0 0 10px rgba(255, 71, 87, 0.7); }
-.cellViolet { background: #8A2BE2; box-shadow: 0 0 10px rgba(138, 43, 226, 0.7); }
-.cellCyber { background: #3B82F6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.7); }
-.cellEmerald { background: #10B981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.7); }
-.cellAmber { background: #FFC048; box-shadow: 0 0 10px rgba(255, 192, 72, 0.7); }
-.cellCyan { background: #00D2D3; box-shadow: 0 0 10px rgba(0, 210, 211, 0.7); }
+.cellCoral { background: #FF5D5D; border-color: #FF5D5D; }
+.cellViolet { background: #9B82F6; border-color: #9B82F6; }
+.cellCyber { background: #18ADF2; border-color: #18ADF2; }
+.cellEmerald { background: #10B981; border-color: #10B981; }
+.cellAmber { background: #F5B700; border-color: #F5B700; }
+.cellCyan { background: #00D2D3; border-color: #00D2D3; }
 
 .widgetFooter {
   display: flex;
@@ -199,7 +197,7 @@
   align-items: center;
   font-size: 0.8rem;
   color: var(--text-dim);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--border-light);
   padding-top: 0.75rem;
 }
 
@@ -208,20 +206,20 @@
   align-items: center;
   gap: 0.35rem;
   font-weight: 800;
-  color: var(--gold);
+  color: var(--highlight);
 }
 
 /* Journal Grid View */
 .journalWrap {
   background: var(--panel);
-  border-radius: var(--bento-radius);
-  border: 1.5px solid var(--border);
+  border-radius: var(--card-radius);
+  border: 1.5px solid var(--border-light);
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   overflow-x: auto;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: none !important;
 }
 
 .journalHeader {
@@ -239,11 +237,11 @@
 .journalGridTable th, .journalGridTable td {
   padding: 0.6rem 0.4rem;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
 }
 
 .journalGridTable th {
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--bg-alt);
   color: var(--text-dim);
   font-weight: 700;
 }
@@ -261,58 +259,58 @@
   height: 15px;
   border-radius: 50%;
   margin: 0 auto;
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border: 1.5px solid var(--border-light);
   cursor: pointer;
   transition: all 0.18s ease;
 }
 
 .gridDotFilled {
-  border-color: transparent;
-  transform: scale(1.12);
+  border-color: var(--highlight);
+  background: var(--highlight);
 }
 
-/* 75 Hard Retro Card */
+/* 75 Hard Card */
 .hardCard {
-  background: #231C16;
-  border: 2px solid #423428;
-  border-radius: var(--bento-radius);
-  padding: 2.25rem;
-  color: #E8D4C1;
+  background: var(--panel);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--card-radius);
+  padding: 2rem;
+  color: var(--text);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.75rem;
   position: relative;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  box-shadow: none !important;
 }
 
 .hardHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 2px dashed #544436;
-  padding-bottom: 1.5rem;
+  border-bottom: 2px dashed var(--border-light);
+  padding-bottom: 1.25rem;
 }
 
 .hardTitle {
   font-family: var(--font-display);
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   font-weight: 900;
   letter-spacing: -0.02em;
-  color: #F6EBD9;
+  color: var(--text);
   text-transform: uppercase;
 }
 
 .hardSubtitle {
-  font-size: 0.88rem;
-  color: #BEA488;
+  font-size: 0.85rem;
+  color: var(--text-dim);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 800;
 }
 
 .hardBadgeBlock {
-  background: #18130F;
-  border: 1.5px solid #544436;
+  background: var(--panel-alt);
+  border: 1.5px solid var(--border-light);
   padding: 0.75rem 1.5rem;
   border-radius: 14px;
   text-align: center;
@@ -321,7 +319,7 @@
 .hardDayNumber {
   font-size: 1.5rem;
   font-weight: 900;
-  color: #F59E0B;
+  color: var(--highlight);
 }
 
 .hardSectionTitle {
@@ -329,7 +327,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #BEA488;
+  color: var(--text-dim);
   margin-bottom: 0.85rem;
 }
 
@@ -348,7 +346,7 @@
 .hardBlockLabel {
   font-size: 0.78rem;
   font-weight: 800;
-  color: #AA9075;
+  color: var(--text-dim);
 }
 
 .hardDaysContainer {
@@ -366,26 +364,25 @@
 .hardDaySquare {
   aspect-ratio: 1;
   border-radius: 4px;
-  background: #191410;
-  border: 1px solid #423428;
+  background: var(--bg-alt);
+  border: 1px solid var(--border-light);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.68rem;
   font-weight: 800;
-  color: #72604F;
+  color: var(--text-dim);
 }
 
 .hardDaySquareDone {
-  background: #D97706;
-  color: #191410;
-  border-color: #F59E0B;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+  background: var(--highlight);
+  color: #061014;
+  border-color: var(--highlight);
 }
 
 .hardDaySquareCurrent {
-  border-color: #F59E0B;
-  color: #F59E0B;
+  border-color: var(--highlight);
+  color: var(--highlight);
 }
 
 .rulesChecklist {
@@ -395,8 +392,8 @@
 }
 
 .ruleItem {
-  background: #1B1612;
-  border: 1.5px solid #423428;
+  background: var(--panel-alt);
+  border: 1.5px solid var(--border-light);
   padding: 1rem 1.1rem;
   border-radius: 16px;
   display: flex;
@@ -407,45 +404,45 @@
 }
 
 .ruleItem:hover {
-  border-color: #F59E0B;
+  border-color: var(--highlight);
 }
 
 .ruleItemChecked {
-  background: #2D2115;
-  border-color: #F59E0B;
+  background: rgba(24, 173, 242, 0.12);
+  border-color: var(--highlight);
 }
 
 .ruleCheckbox {
   width: 1.4rem;
   height: 1.4rem;
   border-radius: 50%;
-  border: 2px solid #72604F;
+  border: 2px solid var(--border-light);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.8rem;
   font-weight: 900;
-  color: #F59E0B;
+  color: var(--highlight);
 }
 
 .ruleCheckboxChecked {
-  border-color: #F59E0B;
-  background: #F59E0B;
-  color: #1B1612;
+  border-color: var(--highlight);
+  background: var(--highlight);
+  color: #061014;
 }
 
 .ruleText {
   font-size: 0.88rem;
   font-weight: 700;
-  color: #E8D4C1;
+  color: var(--text);
 }
 
 /* Fail Modal */
 .failModalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -454,9 +451,9 @@
 }
 
 .failModalCard {
-  background: #1C1514;
-  border: 2px solid #EF4444;
-  border-radius: 28px;
+  background: var(--panel);
+  border: 2px solid var(--coral);
+  border-radius: var(--card-radius);
   padding: 2.25rem;
   max-width: 460px;
   width: 100%;
@@ -464,19 +461,19 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  box-shadow: 0 24px 60px rgba(239, 68, 68, 0.25);
+  box-shadow: none !important;
 }
 
 .failTitle {
   font-size: 1.85rem;
   font-weight: 900;
-  color: #EF4444;
+  color: var(--coral);
   text-transform: uppercase;
   margin: 0;
 }
 
 .failBody {
-  color: #D1D5DB;
+  color: var(--text-dim);
   font-size: 0.92rem;
   line-height: 1.6;
 }

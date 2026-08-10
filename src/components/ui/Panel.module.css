@@ -5,7 +5,7 @@
   padding: 1.5rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: none !important;
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
@@ -18,33 +18,33 @@
 }
 
 .accentForest {
-  background: linear-gradient(145deg, #0E2633, #091A24);
-  border-color: rgba(142, 202, 230, 0.3);
+  background: var(--panel);
+  border-color: var(--border-light);
 }
 
 .accentCrimson {
-  background: linear-gradient(145deg, #182836, #0D1C27);
-  border-color: rgba(24, 173, 242, 0.35);
+  background: var(--panel);
+  border-color: var(--border-light);
 }
 
 .accentGold {
-  background: linear-gradient(145deg, #132A38, #0B1C26);
-  border-color: rgba(142, 202, 230, 0.4);
+  background: var(--panel);
+  border-color: var(--border-light);
 }
 
 .accentEmerald {
-  background: linear-gradient(145deg, #0B2920, #061A14);
-  border-color: rgba(16, 185, 129, 0.35);
+  background: var(--panel);
+  border-color: var(--border-light);
 }
 
 .accentCoral {
-  background: linear-gradient(145deg, #2D1416, #1A090B);
-  border-color: rgba(255, 93, 93, 0.35);
+  background: var(--panel);
+  border-color: var(--border-light);
 }
 
 .accentViolet {
-  background: linear-gradient(145deg, #1B1530, #100C21);
-  border-color: rgba(155, 130, 246, 0.35);
+  background: var(--panel);
+  border-color: var(--border-light);
 }
 
 .accentCream {

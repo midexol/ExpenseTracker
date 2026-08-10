@@ -220,5 +220,5 @@
 
 .heatCellActive {
   background: var(--highlight);
-  box-shadow: 0 0 8px rgba(24, 173, 242, 0.5);
+  border-color: var(--highlight);
 }
