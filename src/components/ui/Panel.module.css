@@ -1,61 +1,56 @@
 .bentoCard {
-  background: var(--bento-slate);
-  border: 1.5px solid var(--border);
-  border-radius: var(--bento-radius);
-  padding: 1.75rem;
+  background: var(--panel);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--card-radius);
+  padding: 1.5rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .bentoCard:hover {
-  border-color: var(--border-light);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+  border-color: rgba(142, 202, 230, 0.4);
 }
 
 .small {
-  border-radius: var(--bento-radius-sm);
-  padding: 1.25rem;
+  padding: 1rem;
 }
 
-/* Curated Bento Block Accents */
 .accentForest {
-  background: var(--bento-forest);
-  border-color: rgba(45, 80, 58, 0.6);
-  color: #F6F0E7;
+  background: linear-gradient(145deg, #0E2633, #091A24);
+  border-color: rgba(142, 202, 230, 0.3);
 }
 
 .accentCrimson {
-  background: var(--bento-crimson);
-  border-color: rgba(180, 50, 50, 0.6);
-  color: #F6F0E7;
+  background: linear-gradient(145deg, #182836, #0D1C27);
+  border-color: rgba(24, 173, 242, 0.35);
 }
 
 .accentGold {
-  background: linear-gradient(145deg, #221D10, #171309);
-  border-color: rgba(245, 183, 0, 0.35);
+  background: linear-gradient(145deg, #132A38, #0B1C26);
+  border-color: rgba(142, 202, 230, 0.4);
 }
 
 .accentEmerald {
-  background: linear-gradient(145deg, #13271D, #0B1912);
+  background: linear-gradient(145deg, #0B2920, #061A14);
   border-color: rgba(16, 185, 129, 0.35);
 }
 
 .accentCoral {
-  background: linear-gradient(145deg, #2C1518, #1E0C0E);
-  border-color: rgba(255, 71, 87, 0.35);
+  background: linear-gradient(145deg, #2D1416, #1A090B);
+  border-color: rgba(255, 93, 93, 0.35);
 }
 
 .accentViolet {
-  background: linear-gradient(145deg, #221433, #150B21);
-  border-color: rgba(138, 43, 226, 0.35);
+  background: linear-gradient(145deg, #1B1530, #100C21);
+  border-color: rgba(155, 130, 246, 0.35);
 }
 
 .accentCream {
-  background: var(--bento-cream);
-  border-color: #E2D9CB;
-  color: #12131A;
+  background: var(--primary);
+  border-color: #A3D8F0;
+  color: #061014;
 }
 
 .inner {

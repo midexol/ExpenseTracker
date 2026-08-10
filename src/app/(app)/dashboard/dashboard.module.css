@@ -3,7 +3,7 @@
 }
 
 .header h1 {
-  font-size: 1.8rem;
+  font-size: 1.85rem;
   font-weight: 900;
   color: var(--text);
 }
@@ -20,201 +20,205 @@
   gap: 1.25rem;
 }
 
-.bentoQuests {
+.colMain {
   grid-column: span 7;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.bentoExpense {
+.colSide {
   grid-column: span 5;
-}
-
-.bentoCategory {
-  grid-column: span 7;
-}
-
-.bentoAchievements {
-  grid-column: span 5;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 @media (max-width: 960px) {
-  .bentoQuests,
-  .bentoExpense,
-  .bentoCategory,
-  .bentoAchievements {
+  .colMain,
+  .colSide {
     grid-column: span 12;
   }
 }
 
-.questItem {
+.heroCard {
+  background: var(--panel);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--card-radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.avatarRingLarge {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--highlight), var(--primary));
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarInnerLarge {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--panel);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.6rem;
+  color: var(--text);
+}
+
+.statRow {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.statBox {
+  flex: 1;
+  background: var(--panel-alt);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+}
+
+.statBoxVal {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--highlight);
+}
+
+.statBoxLbl {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.15rem;
+}
+
+.objectiveRow {
   display: flex;
   align-items: center;
   gap: 0.85rem;
   padding: 0.75rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(142, 202, 230, 0.1);
 }
 
-.questItem:last-child {
+.objectiveRow:last-child {
   border-bottom: none;
 }
 
-.questCheck {
-  width: 1.6rem;
-  height: 1.6rem;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  flex-shrink: 0;
-  color: var(--bento-cream);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.diffBadge {
+  font-size: 0.65rem;
   font-weight: 800;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  white-space: nowrap;
 }
 
-.questCheck:hover {
-  border-color: #FFF;
+.diffEpic {
+  background: rgba(255, 93, 93, 0.2);
+  color: var(--coral);
+  border: 1px solid rgba(255, 93, 93, 0.4);
 }
 
-.questCheckStatic {
-  cursor: default;
+.diffNormal {
+  background: rgba(24, 173, 242, 0.2);
+  color: var(--highlight);
+  border: 1px solid rgba(24, 173, 242, 0.4);
 }
 
-.questTitle {
+.diffEasy {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--emerald);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.objTitle {
   flex: 1;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.9rem;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.questDone {
-  color: var(--emerald);
-}
-
-.emptyQuests {
-  color: var(--text-dim);
-  padding: 1.25rem 0;
-  text-align: center;
-  font-size: 0.88rem;
-}
-
 .quickForm {
   display: flex;
   gap: 0.5rem;
   margin-top: 1rem;
-  flex-wrap: wrap;
 }
 
-.quickForm input,
-.quickForm select {
-  background: rgba(0, 0, 0, 0.25);
+.quickInput {
+  flex: 1;
+  background: var(--bg-alt);
   border: 1.5px solid var(--border-light);
   border-radius: var(--pill-radius);
   color: var(--text);
-  padding: 0.6rem 0.9rem;
+  padding: 0.6rem 1rem;
   font-size: 0.85rem;
   outline: none;
 }
 
-.quickNameInput {
-  flex: 1;
-  min-width: 120px;
-}
-
-.quickAmountInput {
-  width: 100px;
-}
-
-@media (max-width: 540px) {
-  .quickForm {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .quickForm input,
-  .quickForm select {
-    width: 100% !important;
-  }
-  .quickAmountInput {
-    width: 100% !important;
-  }
-}
-
-.chartRow {
+.bountyRow {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin: 0.75rem 0;
-}
-
-.chartLabel {
-  width: 110px;
-  flex-shrink: 0;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-dim);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.chartTrack {
-  flex: 1;
-  height: 10px;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: var(--pill-radius);
-  overflow: hidden;
-}
-
-.chartFill {
-  height: 100%;
-  border-radius: var(--pill-radius);
-}
-
-.chartValue {
-  width: 85px;
-  flex-shrink: 0;
-  text-align: right;
-  font-size: 0.82rem;
-  font-family: var(--font-display);
-  font-weight: 800;
-}
-
-.achievementRow {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  justify-content: space-between;
   padding: 0.65rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(142, 202, 230, 0.1);
 }
 
-.achievementRow:last-child {
+.bountyRow:last-child {
   border-bottom: none;
 }
 
-.achievementIcon {
-  width: 2.2rem;
-  height: 2.2rem;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: #12131A;
-  color: var(--gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-}
-
-.achievementName {
+.bountyName {
   font-weight: 700;
-  font-size: 0.9rem;
-  color: #12131A;
+  font-size: 0.88rem;
 }
 
-.achievementDate {
+.bountyCat {
   font-size: 0.72rem;
-  color: rgba(18, 19, 26, 0.6);
+  color: var(--text-dim);
+}
+
+.bountyAmount {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--emerald);
+}
+
+.heatGrid {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  gap: 4px;
+  margin-top: 0.75rem;
+}
+
+.heatCell {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background: rgba(142, 202, 230, 0.08);
+  border: 1px solid rgba(142, 202, 230, 0.1);
+}
+
+.heatCellActive {
+  background: var(--highlight);
+  box-shadow: 0 0 8px rgba(24, 173, 242, 0.5);
 }
