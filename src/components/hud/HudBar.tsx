@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/expenses", label: "Expenses" },
   { href: "/todos", label: "Quests" },
+  { href: "/habits", label: "Habits & 75 Hard" },
   { href: "/achievements", label: "Achievements" },
   { href: "/settings", label: "Settings" },
 ];

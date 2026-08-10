@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid input" }, { status: 400 });
   }
-  const { title, notes, dueDate, priority } = parsed.data;
+  const { title, notes, dueDate, priority, recurrence } = parsed.data;
 
   const todo = await prisma.todo.create({
     data: {
@@ -40,6 +40,7 @@ export async function POST(request: Request) {
       notes: notes ?? null,
       dueDate: dueDate ?? null,
       priority,
+      recurrence: recurrence ?? "NONE",
       xpValue: TODO_XP[priority] ?? TODO_XP.Med,
     },
   });

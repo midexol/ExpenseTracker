@@ -135,7 +135,10 @@ export default function DashboardPage() {
                 {dueTodos.map((t) => (
                   <div className={styles.questItem} key={t.id}>
                     <button className={styles.questCheck} onClick={() => toggleTodo(t)} aria-label="Complete" />
-                    <span className={styles.questTitle}>{t.title}</span>
+                    <span className={styles.questTitle}>
+                      {t.title}
+                      {t.recurrence === "DAILY" ? " (Daily)" : t.recurrence === "WEEKLY" ? " (Weekly)" : ""}
+                    </span>
                     <span style={{ fontSize: "0.72rem", color: "var(--gold)" }}>+{t.xpValue} XP</span>
                   </div>
                 ))}

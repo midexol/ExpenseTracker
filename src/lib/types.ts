@@ -21,6 +21,7 @@ export interface Todo {
   notes: string | null;
   dueDate: string | null;
   priority: "Low" | "Med" | "High";
+  recurrence: "NONE" | "DAILY" | "WEEKLY";
   completed: boolean;
   completedAt: string | null;
   xpValue: number;

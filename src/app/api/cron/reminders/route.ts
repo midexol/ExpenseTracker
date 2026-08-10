@@ -30,6 +30,7 @@ export async function handleReminders(request: Request) {
 
   let todoReminders = 0;
   let expenseReminders = 0;
+  let challengeReminders = 0;
 
   for (const user of users) {
     const today = getUserLocalDateString(user.timezoneOffset);
@@ -61,9 +62,30 @@ export async function handleReminders(request: Request) {
         expenseReminders++;
       }
     }
+
+    // 75 Hard Reminder: Notify after 19:00 if 75 Hard tasks are incomplete
+    if (user.lastChallengeReminderDate !== today && localHour(user.timezoneOffset) >= 19) {
+      const activeChallenge = await prisma.challenge75.findUnique({
+        where: { userId: user.id },
+      });
+      if (activeChallenge && activeChallenge.status === "ACTIVE") {
+        const todayLog = await prisma.challenge75Log.findUnique({
+          where: { challengeId_date: { challengeId: activeChallenge.id, date: today } },
+        });
+        if (!todayLog || !todayLog.allCompleted) {
+          await sendPushToUser(user.id, {
+            title: "⚠️ 75 Hard Alert!",
+            body: "Your 75 Hard tasks are incomplete today. Complete them before midnight or your streak resets to Day 1!",
+            url: "/habits",
+          });
+          await prisma.user.update({ where: { id: user.id }, data: { lastChallengeReminderDate: today } });
+          challengeReminders++;
+        }
+      }
+    }
   }
 
-  return NextResponse.json({ ok: true, usersChecked: users.length, todoReminders, expenseReminders });
+  return NextResponse.json({ ok: true, usersChecked: users.length, todoReminders, expenseReminders, challengeReminders });
 }
 
 export async function GET(request: Request) {

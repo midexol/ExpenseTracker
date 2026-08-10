@@ -23,6 +23,15 @@ export const CURRENCIES: Record<string, { symbol: string; rate: number }> = {
 
 export const PRIORITIES = ["Low", "Med", "High"] as const;
 
+export const RECURRENCE_OPTIONS = ["NONE", "DAILY", "WEEKLY"] as const;
+export type RecurrenceType = (typeof RECURRENCE_OPTIONS)[number];
+
+export const RECURRENCE_LABELS: Record<RecurrenceType, string> = {
+  NONE: "One-time",
+  DAILY: "Daily",
+  WEEKLY: "Weekly",
+};
+
 export function formatCurrency(amount: number, currency: string) {
   const sym = CURRENCIES[currency]?.symbol ?? "₦";
   return `${sym}${Number(amount).toLocaleString("en-US", {

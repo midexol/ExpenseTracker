@@ -23,12 +23,18 @@ model User {
   // Reminder de-duplication: last local date ("YYYY-MM-DD") a reminder of each kind was sent
   lastTodoReminderDate    String?
   lastExpenseReminderDate String?
+  lastChallengeReminderDate String?
 
   expenses          Expense[]
   budget            Budget?
   todos             Todo[]
   achievements      UserAchievement[]
   pushSubscriptions PushSubscription[]
+  habits            Habit[]
+  habitLogs         HabitLog[]
+  dailyMetrics      DailyMetric[]
+  challenge75       Challenge75?
+  challenge75Logs   Challenge75Log[]
 }
 
 model Expense {
@@ -62,6 +68,7 @@ model Todo {
   notes       String?
   dueDate     String? // "YYYY-MM-DD"
   priority    String    @default("Med") // "Low" | "Med" | "High"
+  recurrence  String    @default("NONE") // "NONE" | "DAILY" | "WEEKLY"
   completed   Boolean   @default(false)
   completedAt DateTime?
   xpValue     Int       @default(10)
@@ -104,4 +111,82 @@ model PushSubscription {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+model Habit {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  category  String   @default("General") // "Health", "Mind", "Fitness", "Work", "General"
+  color     String   @default("coral") // "coral", "violet", "cyber", "emerald", "amber", "cyan"
+  icon      String   @default("check") // icon identifier
+  archived  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  logs HabitLog[]
+
+  @@index([userId])
+}
+
+model HabitLog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  habitId   String   @db.ObjectId
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      String   // "YYYY-MM-DD"
+  completed Boolean  @default(true)
+
+  @@unique([habitId, date])
+  @@index([userId, date])
+}
+
+model DailyMetric {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      String   // "YYYY-MM-DD"
+  sleepHrs  Float?
+  mood      Int?     // 1 - 10
+  stress    Int?     // 1 - 10
+  energy    Int?     // 1 - 10
+
+  @@unique([userId, date])
+  @@index([userId])
+}
+
+model Challenge75 {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String   @unique @db.ObjectId
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status       String   @default("NOT_STARTED") // "NOT_STARTED" | "ACTIVE" | "COMPLETED" | "FAILED"
+  startDate    String?  // "YYYY-MM-DD"
+  currentDay   Int      @default(1) // 1..75
+  attemptCount Int      @default(1)
+  failedDate   String?  // "YYYY-MM-DD" if failed
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  logs Challenge75Log[]
+}
+
+model Challenge75Log {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  challengeId   String      @db.ObjectId
+  challenge     Challenge75 @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  userId        String      @db.ObjectId
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date          String      // "YYYY-MM-DD"
+  dayNumber     Int         // Day 1..75
+  attemptNumber Int         @default(1)
+  diet          Boolean     @default(false)
+  water         Boolean     @default(false)
+  workouts      Boolean     @default(false)
+  reading       Boolean     @default(false)
+  photo         Boolean     @default(false)
+  allCompleted  Boolean     @default(false)
+
+  @@unique([challengeId, date])
+  @@index([userId, date])
 }

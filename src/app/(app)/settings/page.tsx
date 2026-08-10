@@ -14,7 +14,7 @@ import styles from "./settings.module.css";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { me } = useAppData();
+  const { me, refresh } = useAppData();
   const push = usePushSubscription();
 
   const [amount, setAmount] = useState("");
@@ -24,15 +24,38 @@ export default function SettingsPage() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
+  // Profile Form state
+  const [profileName, setProfileName] = useState("");
+  const [profileEmail, setProfileEmail] = useState("");
+  const [profileSaved, setProfileSaved] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
+  const [profileSaving, setProfileSaving] = useState(false);
+
   useEffect(() => {
-    apiRequest<{ budget: Budget | null }>("/api/budget").then((data) => {
-      if (data.budget) {
-        setAmount(String(data.budget.amount));
-        setPeriod(data.budget.period);
-        setCurrency(data.budget.currency);
-      }
-    });
-  }, []);
+    if (me) {
+      setProfileName(me.name);
+      setProfileEmail(me.email);
+    }
+  }, [me]);
+
+  async function handleSaveProfile(e: FormEvent) {
+    e.preventDefault();
+    setProfileError(null);
+    setProfileSaved(false);
+    setProfileSaving(true);
+    try {
+      await apiRequest("/api/me", {
+        method: "PATCH",
+        body: JSON.stringify({ name: profileName, email: profileEmail }),
+      });
+      setProfileSaved(true);
+      await refresh();
+    } catch (err) {
+      setProfileError(err instanceof Error ? err.message : "Failed to update profile");
+    } finally {
+      setProfileSaving(false);
+    }
+  }
 
   async function handleSaveBudget(e: FormEvent) {
     e.preventDefault();
@@ -103,28 +126,50 @@ export default function SettingsPage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           <Panel accent="gold">
-            <h3>Profile</h3>
-            <div style={{ marginTop: "0.6rem" }}>
-              <div className={styles.profileRow}>
-                <span className={styles.profileLabel}>Name</span>
-                <span>{me?.name}</span>
+            <h3>Profile & Account</h3>
+            <form onSubmit={handleSaveProfile} style={{ display: "flex", flexDirection: "column", gap: "0.85rem", marginTop: "0.85rem" }}>
+              {profileError ? <div className={styles.errorMsg}>{profileError}</div> : null}
+              {profileSaved ? <div className={styles.saveMsg}>Profile updated!</div> : null}
+
+              <Field label="Display Name" htmlFor="profile-name">
+                <Input
+                  id="profile-name"
+                  required
+                  value={profileName}
+                  onChange={(e) => setProfileName(e.target.value)}
+                />
+              </Field>
+
+              <Field label="Email Address" htmlFor="profile-email">
+                <Input
+                  id="profile-email"
+                  type="email"
+                  required
+                  value={profileEmail}
+                  onChange={(e) => setProfileEmail(e.target.value)}
+                />
+              </Field>
+
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                <Button type="submit" variant="primary" size="sm" disabled={profileSaving}>
+                  {profileSaving ? "Saving..." : "Save changes"}
+                </Button>
+                <Button type="button" variant="danger" size="sm" onClick={handleLogout}>
+                  Log out
+                </Button>
               </div>
-              <div className={styles.profileRow}>
-                <span className={styles.profileLabel}>Email</span>
-                <span>{me?.email}</span>
-              </div>
+            </form>
+
+            <div style={{ marginTop: "1rem", borderTop: "1px solid var(--border-light)", paddingTop: "0.75rem" }}>
               <div className={styles.profileRow}>
                 <span className={styles.profileLabel}>Level</span>
-                <span>{me?.level}</span>
+                <span>LV {me?.level ?? 1}</span>
               </div>
               <div className={styles.profileRow}>
                 <span className={styles.profileLabel}>Longest streak</span>
-                <span>{me?.longestStreak} days</span>
+                <span>{me?.longestStreak ?? 0} days</span>
               </div>
             </div>
-            <Button variant="danger" size="sm" style={{ marginTop: "1rem" }} onClick={handleLogout}>
-              Log out
-            </Button>
           </Panel>
 
           <Panel accent="violet">

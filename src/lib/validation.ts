@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CATEGORIES, PRIORITIES } from "./constants";
+import { CATEGORIES, PRIORITIES, RECURRENCE_OPTIONS } from "./constants";
 
 export const registerSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(60),
@@ -33,6 +33,7 @@ export const todoSchema = z.object({
     .optional()
     .nullable(),
   priority: z.enum(PRIORITIES).default("Med"),
+  recurrence: z.enum(RECURRENCE_OPTIONS).default("NONE"),
 });
 
 export const todoUpdateSchema = z.object({
@@ -44,6 +45,7 @@ export const todoUpdateSchema = z.object({
     .optional()
     .nullable(),
   priority: z.enum(PRIORITIES).optional(),
+  recurrence: z.enum(RECURRENCE_OPTIONS).optional(),
   completed: z.boolean().optional(),
   timezoneOffset: z.number().int().default(0),
 });
