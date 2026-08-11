@@ -23,6 +23,7 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [loadingBudget, setLoadingBudget] = useState(true);
 
   // Profile Form state
   const [profileName, setProfileName] = useState("");
@@ -37,6 +38,25 @@ export default function SettingsPage() {
       setProfileEmail(me.email);
     }
   }, [me]);
+
+  useEffect(() => {
+    async function loadBudget() {
+      try {
+        setLoadingBudget(true);
+        const data = await apiRequest<{ budget: Budget | null }>("/api/budget");
+        if (data.budget) {
+          setAmount(String(data.budget.amount));
+          setPeriod(data.budget.period as "Weekly" | "Monthly");
+          setCurrency(data.budget.currency);
+        }
+      } catch (err) {
+        console.error("Failed to load budget", err);
+      } finally {
+        setLoadingBudget(false);
+      }
+    }
+    loadBudget();
+  }, []);
 
   async function handleSaveProfile(e: FormEvent) {
     e.preventDefault();
@@ -63,11 +83,21 @@ export default function SettingsPage() {
     setSaved(false);
     setSaving(true);
     try {
-      await apiRequest("/api/budget", {
+      const parsedAmount = parseFloat(amount);
+      if (isNaN(parsedAmount) || parsedAmount <= 0) {
+        throw new Error("Please enter a budget amount greater than 0");
+      }
+      const data = await apiRequest<{ budget: Budget }>("/api/budget", {
         method: "PUT",
-        body: JSON.stringify({ amount: parseFloat(amount) || 0, period, currency }),
+        body: JSON.stringify({ amount: parsedAmount, period, currency }),
       });
+      if (data.budget) {
+        setAmount(String(data.budget.amount));
+        setPeriod(data.budget.period as "Weekly" | "Monthly");
+        setCurrency(data.budget.currency);
+      }
       setSaved(true);
+      await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -89,39 +119,47 @@ export default function SettingsPage() {
 
       <div className={styles.grid}>
         <Panel accent="emerald">
-          <h3>Budget</h3>
-          <form className={styles.form} onSubmit={handleSaveBudget}>
-            {error ? <div className={styles.errorMsg}>{error}</div> : null}
-            {saved ? <div className={styles.saveMsg}>Budget saved.</div> : null}
-            <Field label="Amount" htmlFor="budget-amount">
-              <Input
-                id="budget-amount"
-                type="number"
-                min="0"
-                step="0.01"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </Field>
-            <Field label="Period" htmlFor="budget-period">
-              <Select id="budget-period" value={period} onChange={(e) => setPeriod(e.target.value as "Weekly" | "Monthly")}>
-                <option value="Weekly">Weekly</option>
-                <option value="Monthly">Monthly</option>
-              </Select>
-            </Field>
-            <Field label="Currency" htmlFor="budget-currency">
-              <Select id="budget-currency" value={currency} onChange={(e) => setCurrency(e.target.value)}>
-                {Object.keys(CURRENCIES).map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-            <Button type="submit" variant="emerald" disabled={saving}>
-              {saving ? "Saving..." : "Save budget"}
-            </Button>
-          </form>
+          <h3>Budget Vault Settings</h3>
+          {loadingBudget ? (
+            <div style={{ color: "var(--text-dim)", padding: "1rem 0", fontSize: "0.85rem" }}>
+              Loading budget settings...
+            </div>
+          ) : (
+            <form className={styles.form} onSubmit={handleSaveBudget}>
+              {error ? <div className={styles.errorMsg}>{error}</div> : null}
+              {saved ? <div className={styles.saveMsg}>Budget updated successfully!</div> : null}
+              <Field label="Amount" htmlFor="budget-amount">
+                <Input
+                  id="budget-amount"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  required
+                  placeholder="e.g. 50000"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                />
+              </Field>
+              <Field label="Period" htmlFor="budget-period">
+                <Select id="budget-period" value={period} onChange={(e) => setPeriod(e.target.value as "Weekly" | "Monthly")}>
+                  <option value="Weekly">Weekly</option>
+                  <option value="Monthly">Monthly</option>
+                </Select>
+              </Field>
+              <Field label="Currency" htmlFor="budget-currency">
+                <Select id="budget-currency" value={currency} onChange={(e) => setCurrency(e.target.value)}>
+                  {Object.keys(CURRENCIES).map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Button type="submit" variant="emerald" disabled={saving}>
+                {saving ? "Saving..." : "Save Budget Vault ↗"}
+              </Button>
+            </form>
+          )}
         </Panel>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
