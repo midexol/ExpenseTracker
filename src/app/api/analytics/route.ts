@@ -113,23 +113,7 @@ export async function GET(request: Request) {
     completedDays: challenge?.logs.filter((l) => l.allCompleted).length ?? 0,
   };
 
-  // 6. Wellness & Daily Metrics
-  const dailyMetrics = await prisma.dailyMetric.findMany({
-    where: { userId: user.id },
-    take: 30,
-  });
-
-  const validSleep = dailyMetrics.filter((m) => m.sleepHrs != null).map((m) => m.sleepHrs!);
-  const validMood = dailyMetrics.filter((m) => m.mood != null).map((m) => m.mood!);
-  const validStress = dailyMetrics.filter((m) => m.stress != null).map((m) => m.stress!);
-  const validEnergy = dailyMetrics.filter((m) => m.energy != null).map((m) => m.energy!);
-
-  const avgSleep = validSleep.length > 0 ? Math.round((validSleep.reduce((a, b) => a + b, 0) / validSleep.length) * 10) / 10 : null;
-  const avgMood = validMood.length > 0 ? Math.round((validMood.reduce((a, b) => a + b, 0) / validMood.length) * 10) / 10 : null;
-  const avgStress = validStress.length > 0 ? Math.round((validStress.reduce((a, b) => a + b, 0) / validStress.length) * 10) / 10 : null;
-  const avgEnergy = validEnergy.length > 0 ? Math.round((validEnergy.reduce((a, b) => a + b, 0) / validEnergy.length) * 10) / 10 : null;
-
-  // 7. Activity Heatmap Grid (Past 365 Days)
+  // 6. Activity Heatmap Grid (Past 365 Days)
   const activityMap = new Map<string, number>();
 
   // Count completed todos by date (completedAt or dueDate)
@@ -169,6 +153,9 @@ export async function GET(request: Request) {
   const startDateStr = addDays(todayStr, -364);
 
   let currentCursor = startDateStr;
+  let activeDaysInMonth = 0;
+  const last30DaysStart = addDays(todayStr, -29);
+
   while (currentCursor <= todayStr) {
     const count = activityMap.get(currentCursor) || 0;
     let level: 0 | 1 | 2 | 3 | 4 = 0;
@@ -178,8 +165,35 @@ export async function GET(request: Request) {
     else if (count >= 9) level = 4;
 
     activityGrid.push({ date: currentCursor, count, level });
+
+    if (currentCursor >= last30DaysStart && count > 0) {
+      activeDaysInMonth += 1;
+    }
+
     currentCursor = addDays(currentCursor, 1);
   }
+
+  // 7. Calculate 6 Core Paladin Attributes for Radar Visualization (0 - 100)
+  const budgetLimit = userRecord.budget?.amount ?? 0;
+  let budgetScore = 80;
+  if (budgetLimit > 0) {
+    const budgetUsagePct = (monthSpent / budgetLimit) * 100;
+    budgetScore = Math.max(0, Math.min(100, Math.round(100 - budgetUsagePct)));
+  }
+
+  const streakScore = Math.min(100, Math.round((userRecord.currentStreak / 30) * 100));
+  const habitScore = totalHabits > 0 ? Math.min(100, Math.round((totalHabitLogs / (totalHabits * 15)) * 100)) : 50;
+  const disciplineScore = challenge?.status === "ACTIVE" ? Math.round(((challenge.currentDay - 1) / 75) * 100) : challenge?.status === "COMPLETED" ? 100 : 30;
+  const activityScore = Math.round((activeDaysInMonth / 30) * 100);
+
+  const radarAttributes = [
+    { label: "Discipline", value: Math.max(15, disciplineScore) },
+    { label: "Quests", value: Math.max(15, questCompletionRate) },
+    { label: "Habits", value: Math.max(15, habitScore) },
+    { label: "Gold Vault", value: Math.max(15, budgetScore) },
+    { label: "Streak", value: Math.max(15, streakScore) },
+    { label: "Activity", value: Math.max(15, activityScore) },
+  ];
 
   return NextResponse.json({
     user: {
@@ -208,12 +222,7 @@ export async function GET(request: Request) {
       byCategory: habitCategories,
     },
     challenge75: challengeStats,
-    wellness: {
-      avgSleep,
-      avgMood,
-      avgStress,
-      avgEnergy,
-    },
+    radarAttributes,
     activityGrid,
   });
 }

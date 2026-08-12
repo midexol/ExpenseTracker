@@ -9,11 +9,11 @@ import styles from "./HudBar.module.css";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
-  { href: "/analytics", label: "Analytics", icon: "analytics" },
   { href: "/todos", label: "Quest Log", icon: "quests" },
   { href: "/expenses", label: "Gold Tracker", icon: "gold" },
   { href: "/habits", label: "Habit Rituals", icon: "habits" },
   { href: "/75hard", label: "75 Hard", icon: "hard" },
+  { href: "/analytics", label: "Analytics", icon: "analytics" },
   { href: "/settings", label: "Settings", icon: "settings" },
 ];
 

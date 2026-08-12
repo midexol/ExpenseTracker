@@ -203,33 +203,11 @@
   transition: width 0.4s ease;
 }
 
-/* Wellness Meters */
-.wellnessGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.wellnessBox {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 1rem;
-  text-align: center;
-}
-
-.wellnessVal {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 900;
-  color: var(--highlight);
-}
-
-.wellnessLbl {
-  font-size: 0.75rem;
-  color: var(--text-dim);
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-top: 0.2rem;
+/* Radar Chart Section */
+.radarBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0;
 }
