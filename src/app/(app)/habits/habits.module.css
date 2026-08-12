@@ -376,7 +376,7 @@
 
 .hardDaySquareDone {
   background: var(--highlight);
-  color: #061014;
+  color: var(--primary-ink);
   border-color: var(--highlight);
 }
 
@@ -428,7 +428,7 @@
 .ruleCheckboxChecked {
   border-color: var(--highlight);
   background: var(--highlight);
-  color: #061014;
+  color: var(--primary-ink);
 }
 
 .ruleText {

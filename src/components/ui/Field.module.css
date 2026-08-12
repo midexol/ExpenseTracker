@@ -35,8 +35,8 @@
 }
 
 .control option {
-  background-color: #0C1E29 !important;
-  color: #E0EBF0 !important;
+  background-color: var(--panel) !important;
+  color: var(--text) !important;
   padding: 0.75rem 1rem;
   font-size: 0.9rem;
   font-weight: 700;

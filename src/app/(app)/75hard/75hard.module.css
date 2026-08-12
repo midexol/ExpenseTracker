@@ -160,7 +160,7 @@
 .checkCircleChecked {
   border-color: var(--highlight);
   background: var(--highlight);
-  color: #061014;
+  color: var(--primary-ink);
 }
 
 /* Analytics Section */
@@ -245,7 +245,7 @@
 
 .daySquareDone {
   background: var(--highlight);
-  color: #061014;
+  color: var(--primary-ink);
   border-color: var(--highlight);
 }
 

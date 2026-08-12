@@ -31,26 +31,26 @@
 }
 
 [data-theme="light"] {
-  --bg: #E0EBF0;
-  --bg-alt: #D0E2EC;
+  --bg: #F4F7F9;
+  --bg-alt: #E8EEF3;
   --panel: #FFFFFF;
-  --panel-alt: #E4F0F6;
-  --border: #136286;
-  --border-light: rgba(19, 98, 134, 0.3);
+  --panel-alt: #F0F4F8;
+  --border: #B6CDD8;
+  --border-light: rgba(182, 205, 216, 0.6);
 
-  --text: #061014;
-  --text-dim: #136286;
-  --text-faint: #4A6D80;
+  --text: #08161E;
+  --text-dim: #2A5268;
+  --text-faint: #5C7C8E;
 
-  --primary: #136286;
-  --primary-ink: #E0EBF0;
-  --highlight: #18ADF2;
+  --primary: #0D74A6;
+  --primary-ink: #FFFFFF;
+  --highlight: #0284C7;
 
-  --gold: #136286;
-  --emerald: #18ADF2;
+  --gold: #D97706;
+  --emerald: #059669;
   --coral: #DC2626;
-  --violet: #136286;
-  --blue: #18ADF2;
+  --violet: #7C3AED;
+  --blue: #0284C7;
 
   color-scheme: light;
 }
