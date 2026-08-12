@@ -2,10 +2,19 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/session";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/expenses", "/todos", "/achievements", "/settings"];
+const PROTECTED_PREFIXES = [
+  "/dashboard",
+  "/analytics",
+  "/expenses",
+  "/todos",
+  "/habits",
+  "/75hard",
+  "/achievements",
+  "/settings",
+];
 const AUTH_PAGES = ["/login", "/register"];
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
   const session = token ? await verifySessionToken(token) : null;
