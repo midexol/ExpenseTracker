@@ -216,9 +216,32 @@
   border-radius: 4px;
   background: rgba(142, 202, 230, 0.08);
   border: 1px solid rgba(142, 202, 230, 0.1);
+  transition: all 0.2s ease;
 }
 
-.heatCellActive {
+.heatCellActive,
+.heatCellLevel3 {
   background: var(--highlight);
   border-color: var(--highlight);
+}
+
+.heatCellLevel0 {
+  background: var(--bg-alt);
+  border: 1px solid var(--border-light);
+}
+
+.heatCellLevel1 {
+  background: rgba(24, 173, 242, 0.25);
+  border: 1px solid rgba(24, 173, 242, 0.4);
+}
+
+.heatCellLevel2 {
+  background: rgba(24, 173, 242, 0.5);
+  border: 1px solid rgba(24, 173, 242, 0.7);
+}
+
+.heatCellLevel4 {
+  background: #00e5ff;
+  border-color: #00e5ff;
+  box-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
 }

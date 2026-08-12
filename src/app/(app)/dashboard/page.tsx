@@ -18,20 +18,24 @@ export default function DashboardPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [budget, setBudget] = useState<Budget | null>(null);
+  const [activityGrid, setActivityGrid] = useState<Array<{ date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }>>([]);
   const [quickExpense, setQuickExpense] = useState({ name: "", category: CATEGORIES[0] as string, amount: "" });
   const [quickTodo, setQuickTodo] = useState("");
 
   const today = todayLocalString();
 
   async function loadAll() {
-    const [todosData, expensesData, budgetData] = await Promise.all([
+    const tz = clientTimezoneOffset();
+    const [todosData, expensesData, budgetData, analyticsData] = await Promise.all([
       apiRequest<{ todos: Todo[] }>("/api/todos?completed=false"),
       apiRequest<{ expenses: Expense[] }>("/api/expenses"),
       apiRequest<{ budget: Budget | null }>("/api/budget"),
+      apiRequest<{ activityGrid: Array<{ date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }> }>(`/api/analytics?tzOffset=${tz}`),
     ]);
     setTodos(todosData.todos);
     setExpenses(expensesData.expenses);
     setBudget(budgetData.budget);
+    setActivityGrid(analyticsData.activityGrid);
   }
 
   useEffect(() => {
@@ -197,10 +201,29 @@ export default function DashboardPage() {
 
           {/* Skill Grind Heatmap (Past 30 Days) */}
           <Panel>
-            <h3>Skill Grind (Last 30 Days)</h3>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3>Skill Grind (Last 30 Days)</h3>
+              <button
+                onClick={() => router.push("/analytics")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "var(--highlight)",
+                  fontSize: "0.78rem",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Full Analytics ↗
+              </button>
+            </div>
             <div className={styles.heatGrid}>
-              {Array.from({ length: 30 }).map((_, i) => (
-                <div key={i} className={`${styles.heatCell} ${i % 3 === 0 ? styles.heatCellActive : ""}`} />
+              {activityGrid.slice(-30).map((item) => (
+                <div
+                  key={item.date}
+                  className={`${styles.heatCell} ${styles[`heatCellLevel${item.level}`]}`}
+                  title={`${item.date}: ${item.count} activity actions`}
+                />
               ))}
             </div>
           </Panel>

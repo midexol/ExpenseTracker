@@ -9,6 +9,7 @@ import styles from "./HudBar.module.css";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
+  { href: "/analytics", label: "Analytics", icon: "analytics" },
   { href: "/todos", label: "Quest Log", icon: "quests" },
   { href: "/expenses", label: "Gold Tracker", icon: "gold" },
   { href: "/habits", label: "Habit Rituals", icon: "habits" },
@@ -24,6 +25,15 @@ function NavIcon({ type }: { type: string }) {
         <rect x="14" y="3" width="7" height="7" rx="1.5" />
         <rect x="14" y="14" width="7" height="7" rx="1.5" />
         <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      </svg>
+    );
+  }
+  if (type === "analytics") {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M18 20V10" />
+        <path d="M12 20V4" />
+        <path d="M6 20v-6" />
       </svg>
     );
   }
