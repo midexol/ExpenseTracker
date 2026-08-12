@@ -46,6 +46,7 @@ export default function Challenge75Page() {
   const [challenge, setChallenge] = useState<Challenge75 | null>(null);
   const [logs, setLogs] = useState<Challenge75Log[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dismissedModal, setDismissedModal] = useState(false);
 
   const today = todayLocalString();
 
@@ -62,11 +63,22 @@ export default function Challenge75Page() {
     loadData();
   }, []);
 
-  async function handleAction(action: "START" | "RESTART") {
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && challenge?.status === "FAILED" && !dismissedModal) {
+        setDismissedModal(true);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [challenge?.status, dismissedModal]);
+
+  async function handleAction(action: "START" | "RESTART" | "ABORT") {
     await apiRequest("/api/challenge75", {
       method: "POST",
       body: JSON.stringify({ action, timezoneOffset: clientTimezoneOffset() }),
     });
+    setDismissedModal(false);
     await loadData();
   }
 
@@ -112,7 +124,23 @@ export default function Challenge75Page() {
               <div className={styles.dayTitle}>
                 DAY {challenge?.status === "ACTIVE" ? challenge.currentDay : 1} <span>/ 75</span>
               </div>
-              <div className={styles.attemptBadge}>Attempt #{challenge?.attemptCount ?? 1}</div>
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+                <div className={styles.attemptBadge}>Attempt #{challenge?.attemptCount ?? 1}</div>
+                {challenge?.status === "ACTIVE" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      if (confirm("Are you sure you want to cancel this 75 Hard attempt?")) {
+                        handleAction("ABORT");
+                      }
+                    }}
+                    style={{ color: "var(--coral)", border: "1px solid rgba(255, 77, 77, 0.3)" }}
+                  >
+                    Cancel Challenge
+                  </Button>
+                )}
+              </div>
             </div>
 
             <div className={styles.subtext}>
@@ -128,7 +156,7 @@ export default function Challenge75Page() {
             </div>
           </div>
 
-          {/* Start / Fail Controls */}
+          {/* Start / Fail / Active Controls */}
           {(!challenge || challenge.status === "NOT_STARTED") && (
             <Panel>
               <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
@@ -144,19 +172,82 @@ export default function Challenge75Page() {
           )}
 
           {challenge?.status === "FAILED" && (
-            <div className={styles.failModalOverlay}>
-              <div className={styles.failModalCard}>
-                <div className={styles.failTitle}>CHALLENGE FAILED</div>
-                <div className={styles.failBody}>
-                  You missed one or more required daily tasks on <strong>{challenge.failedDate ?? "yesterday"}</strong>.
-                  <br /><br />
-                  Per the 75 Hard rules: <em>Zero exceptions, zero cheat days.</em> Your streak has been reset to Day 1 for Attempt #{challenge.attemptCount + 1}.
+            <>
+              {!dismissedModal && (
+                <div
+                  className={styles.failModalOverlay}
+                  onClick={(e) => {
+                    if (e.target === e.currentTarget) {
+                      setDismissedModal(true);
+                    }
+                  }}
+                >
+                  <div className={styles.failModalCard}>
+                    <button
+                      type="button"
+                      className={styles.closeBtn}
+                      onClick={() => setDismissedModal(true)}
+                      aria-label="Close modal"
+                      title="Close"
+                    >
+                      ✕
+                    </button>
+                    <div className={styles.failTitle}>CHALLENGE FAILED</div>
+                    <div className={styles.failBody}>
+                      You missed one or more required daily tasks on <strong>{challenge.failedDate ?? "yesterday"}</strong>.
+                      <br /><br />
+                      Per the 75 Hard rules: <em>Zero exceptions, zero cheat days.</em> Your streak has been reset to Day 1 for Attempt #{challenge.attemptCount + 1}.
+                    </div>
+                    <div className={styles.modalActionRow}>
+                      <Button variant="danger" onClick={() => handleAction("RESTART")}>
+                        Accept Twist & Restart Day 1 ↗
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          if (confirm("Are you sure you want to cancel this challenge?")) {
+                            handleAction("ABORT");
+                          }
+                        }}
+                        style={{ color: "var(--coral)" }}
+                      >
+                        Cancel Challenge
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <Button variant="danger" onClick={() => handleAction("RESTART")}>
-                  Accept Twist & Restart Day 1 ↗
-                </Button>
-              </div>
-            </div>
+              )}
+
+              <Panel>
+                <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
+                  <h3 style={{ color: "var(--coral)", marginBottom: "0.5rem" }}>Challenge Failed</h3>
+                  <p style={{ color: "var(--text-dim)", marginBottom: "1.25rem" }}>
+                    You missed required daily tasks on <strong>{challenge.failedDate ?? "yesterday"}</strong>. Ready for Attempt #{challenge.attemptCount + 1}?
+                  </p>
+                  <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
+                    <Button variant="danger" onClick={() => handleAction("RESTART")}>
+                      Accept Twist & Restart Day 1 ↗
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        if (confirm("Are you sure you want to cancel this challenge?")) {
+                          handleAction("ABORT");
+                        }
+                      }}
+                      style={{ color: "var(--coral)" }}
+                    >
+                      Cancel Challenge
+                    </Button>
+                    {dismissedModal && (
+                      <Button variant="ghost" onClick={() => setDismissedModal(false)}>
+                        View Failure Details
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </Panel>
+            </>
           )}
 
           {/* Daily Directives Checklist */}
