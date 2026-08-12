@@ -58,6 +58,7 @@ export default function HabitsPage() {
   // Forms
   const [newHabit, setNewHabit] = useState({ title: "", category: "General", color: "coral" as Habit["color"] });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [metricForm, setMetricForm] = useState({ sleepHrs: "", mood: "", stress: "" });
 
   const today = todayLocalString();
@@ -138,6 +139,32 @@ export default function HabitsPage() {
     await loadHabitsData();
   }
 
+  // Update habit
+  async function handleUpdateHabit(e: FormEvent) {
+    e.preventDefault();
+    if (!editingHabit || !editingHabit.title.trim()) return;
+    await apiRequest(`/api/habits/${editingHabit.id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        title: editingHabit.title,
+        category: editingHabit.category,
+        color: editingHabit.color,
+      }),
+    });
+    setEditingHabit(null);
+    await loadHabitsData();
+  }
+
+  // Delete habit
+  async function handleDeleteHabit(habitId: string, habitTitle: string) {
+    if (!confirm(`Are you sure you want to remove the habit "${habitTitle}"?`)) return;
+    await apiRequest(`/api/habits/${habitId}`, {
+      method: "DELETE",
+    });
+    if (editingHabit?.id === habitId) setEditingHabit(null);
+    await loadHabitsData();
+  }
+
   // Log Daily Metrics
   async function handleLogMetrics(e: FormEvent) {
     e.preventDefault();
@@ -184,7 +211,14 @@ export default function HabitsPage() {
             <span style={{ fontSize: "0.85rem", color: "var(--text-dim)", fontWeight: 600 }}>
               {habits.length} Active Habits · Past 28 Days Heatmap
             </span>
-            <Button variant="violet" size="sm" onClick={() => setShowAddForm(!showAddForm)}>
+            <Button
+              variant="violet"
+              size="sm"
+              onClick={() => {
+                setShowAddForm(!showAddForm);
+                setEditingHabit(null);
+              }}
+            >
               {showAddForm ? "Cancel" : "+ Add Habit"}
             </Button>
           </div>
@@ -236,6 +270,66 @@ export default function HabitsPage() {
             </Panel>
           )}
 
+          {editingHabit && (
+            <Panel accent="violet">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h3>Edit Habit Widget</h3>
+                <Button size="sm" variant="ghost" onClick={() => setEditingHabit(null)}>
+                  Cancel
+                </Button>
+              </div>
+              <form onSubmit={handleUpdateHabit} style={{ display: "flex", gap: "0.75rem", marginTop: "0.85rem", flexWrap: "wrap" }}>
+                <Field label="Habit Name" htmlFor="edit-habit-title">
+                  <Input
+                    id="edit-habit-title"
+                    required
+                    placeholder="Habit Title..."
+                    value={editingHabit.title}
+                    onChange={(e) => setEditingHabit((h) => (h ? { ...h, title: e.target.value } : null))}
+                  />
+                </Field>
+
+                <Field label="Category" htmlFor="edit-habit-cat">
+                  <Input
+                    id="edit-habit-cat"
+                    placeholder="Category..."
+                    value={editingHabit.category}
+                    onChange={(e) => setEditingHabit((h) => (h ? { ...h, category: e.target.value } : null))}
+                  />
+                </Field>
+
+                <Field label="Color Theme" htmlFor="edit-habit-color">
+                  <Select
+                    id="edit-habit-color"
+                    value={editingHabit.color}
+                    onChange={(e) => setEditingHabit((h) => (h ? { ...h, color: e.target.value as Habit["color"] } : null))}
+                  >
+                    <option value="coral">Coral Red</option>
+                    <option value="violet">Violet Blue</option>
+                    <option value="cyber">Cyber Blue</option>
+                    <option value="emerald">Ocean Blue</option>
+                    <option value="amber">Sky Blue</option>
+                    <option value="cyan">Deep Slate</option>
+                  </Select>
+                </Field>
+
+                <div style={{ alignSelf: "flex-end", display: "flex", gap: "0.5rem" }}>
+                  <Button type="submit" variant="emerald" size="sm">
+                    Save Changes ↗
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDeleteHabit(editingHabit.id, editingHabit.title)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </form>
+            </Panel>
+          )}
+
           {loadingHabits ? (
             <div style={{ color: "var(--text-faint)", padding: "2rem 0" }}>Loading habit widgets...</div>
           ) : (
@@ -257,13 +351,32 @@ export default function HabitsPage() {
                         </div>
                       </div>
 
-                      <button
-                        className={`${styles.checkBtn} ${isTodayDone ? styles.checkBtnCompleted : ""}`}
-                        onClick={() => handleToggleHabit(habit.id, today)}
-                        aria-label="Toggle today check-in"
-                      >
-                        ✓
-                      </button>
+                      <div className={styles.cardActions}>
+                        <button
+                          className={styles.actionBtn}
+                          onClick={() => {
+                            setEditingHabit(habit);
+                            setShowAddForm(false);
+                          }}
+                          title="Edit Habit"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                          onClick={() => handleDeleteHabit(habit.id, habit.title)}
+                          title="Remove Habit"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          className={`${styles.checkBtn} ${isTodayDone ? styles.checkBtnCompleted : ""}`}
+                          onClick={() => handleToggleHabit(habit.id, today)}
+                          aria-label="Toggle today check-in"
+                        >
+                          ✓
+                        </button>
+                      </div>
                     </div>
 
                     <div className={styles.heatmapWrap}>
@@ -386,6 +499,18 @@ export default function HabitsPage() {
                       <td className={styles.habitRowHeader}>
                         <span style={{ display: "inline-block", width: "8px", height: "8px", borderRadius: "50%", background: colorHex, marginRight: "0.5rem" }} />
                         {habit.title}
+                        <button
+                          className={styles.actionBtn}
+                          style={{ marginLeft: "0.5rem", padding: "0.15rem 0.4rem", fontSize: "0.68rem" }}
+                          onClick={() => {
+                            setActiveTab("widgets");
+                            setEditingHabit(habit);
+                            setShowAddForm(false);
+                          }}
+                          title="Edit habit"
+                        >
+                          Edit
+                        </button>
                       </td>
                       {currentMonthDays.map((date) => {
                         const isDone = datesDone.has(date);

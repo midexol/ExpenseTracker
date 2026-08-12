@@ -153,7 +153,37 @@
 .checkBtnCompleted {
   border-color: var(--emerald);
   background: var(--emerald);
-  color: #fff;
+  color: var(--primary-ink);
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.actionBtn {
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: var(--pill-radius);
+  color: var(--text-dim);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionBtn:hover {
+  color: var(--text);
+  border-color: var(--highlight);
+  background: var(--bg-alt);
+}
+
+.deleteBtn:hover {
+  color: var(--coral);
+  border-color: var(--coral);
+  background: rgba(255, 93, 93, 0.1);
 }
 
 /* Heatmap Grid */
