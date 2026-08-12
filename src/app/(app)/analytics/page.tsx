@@ -124,7 +124,7 @@ function RadarChart({ attributes }: { attributes: RadarAttribute[] }) {
           const labelX = cx + labelR * Math.cos(angle);
           const labelY = cy + labelR * Math.sin(angle);
 
-          let textAnchor = "middle";
+          let textAnchor: "middle" | "start" | "end" = "middle";
           if (Math.cos(angle) > 0.3) textAnchor = "start";
           else if (Math.cos(angle) < -0.3) textAnchor = "end";
 
